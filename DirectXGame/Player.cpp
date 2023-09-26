@@ -93,7 +93,7 @@ void Player::Update() {
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	worldTransform_.TransferMatrix();
+	worldTransform_.UpdeateMatrix();
 	
 	
 	//弾の寿命
@@ -139,6 +139,10 @@ void Player::Attack()
 	}
 }
 
+void Player::OnCollision() {}
+
+
+
 void Player::Draw(ViewProjection& viewProjection_) {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	
@@ -148,4 +152,22 @@ void Player::Draw(ViewProjection& viewProjection_) {
 		bullet->Draw(viewProjection_);
 	}
 
+}
+
+
+Vector3 Player::GetWorldPosition() 
+{
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
+
+
+void Player::SetParent(const WorldTransform* parent) {
+
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
 }
