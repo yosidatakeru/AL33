@@ -4,10 +4,13 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
+#include "Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include <DebugCamera.h>
+#include"Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -48,4 +51,13 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	// 3Dモデル
+	Model* model_ = nullptr;
+	uint32_t textureHandle_ = 0;
+	ViewProjection viewProjection_;
+	Player* player_ = nullptr;
+	bool isDebgCameraActive_ = false;
+	DebugCamera* debugCamera_ = nullptr;
+	Model* enemyModel_ = nullptr;
+	Enemy* enemy_ = nullptr;
 };
