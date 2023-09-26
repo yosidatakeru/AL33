@@ -2,6 +2,7 @@
 #include <Model.h>
 #include <WorldTransform.h>
 
+
 class Skydome {
 public:
 	// 初期化
