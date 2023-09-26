@@ -2,8 +2,15 @@
 #include <ViewProjection.h>
 #include "Model.h"
 #include "WorldTransform.h"
-class Enemy {
+#include "EnemyBullet.h"
+
+class Player;
+
+class Enemy 
+{
 public:
+	~Enemy();
+
 	Vector3 velocity_;
 	//	//Vector3 velociy_;
 	//	/// <summary>
@@ -28,7 +35,23 @@ public:
 
 	void LeaveUpdate();
 
+	//攻撃フェイズ初期化
+	void PhaseInitialize();
 
+	void Fire();
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	Vector3 GetWorldPosition();
+
+	Vector3 LerpFanc(Vector3 v1, Vector3 v2);
+
+	//float_t GetRadius() { return radius_; }
+
+	// 弾リストを取得
+	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	// 衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
 
 private:
 	// ワールドトランスホーム:
@@ -37,12 +60,26 @@ private:
 	Model* model_ = nullptr;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	// Enemy* enemy_ = nullptr;
+	
+	std::list<EnemyBullet*> bullets_;
+
 
 	// enum宣言
-	enum class Phase {
+	enum class Phase 
+	{
 		Approach, // 接近
 		Leave,    // 離脱
 	};
 	Phase phase_ = Phase();
+
+	static const int kFireInterval = 60;
+
+	int32_t FireTimer = 0;
+
+	Player* player_ = nullptr;
+
+		const float_t radius_ = 1.0f;
+
+
+
 };
