@@ -16,6 +16,9 @@ GameScene::~GameScene() {
 	delete enemy_;
 
 	delete skydomeModel_;
+
+	// レールカメラの解放
+	delete railCamera_;
 }
 
 
@@ -29,22 +32,44 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("sample.png");
-
+	// ビュープロジェクション
+	// forZを適度に大きい値に変更する
+	// 大きくしすぎるとZファイティングになるよ
+	viewProjection_.farZ = 1200.0f;
+	// 初期化
+	viewProjection_.Initialize();
 	
+	/* ----- キャラクターの生成・初期化 ----- */
+
 	// 3Dモデルの生成
 	model_ = Model::Create();
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	// 自キャラの生成
 	player_ = new Player();
+
+	Vector3 playerPosition(0.0f, -5.0f, 20.0f);
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_, playerPosition);
+	
 
-	// デバックカメラの生成
-	debugCamera_ = new DebugCamera(720, 1280);
+		// 敵/////////////
+	const float kEnemySpeed = -0.5f;
+	Vector3 velocity(0, 0, kEnemySpeed);
+	Vector3 enemyPosition(0, 1.0, 100);
+
+	enemyModel_ = Model::Create();
+	enemy_ = new Enemy();
+	enemy_->Initialize(enemyModel_, enemyPosition, velocity);
+
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
+	/////////////////////////
 
 
+
+	
 	// 天球
 
 	// 生成
@@ -61,12 +86,18 @@ void GameScene::Initialize() {
 	skydome_->Initialize(skydomeModel_, skydomeTextureHandle_);
 
 	
-	// ビュープロジェクション
-	// forZを適度に大きい値に変更する
-	// 大きくしすぎるとZファイティングになるよ
-	viewProjection_.farZ = 1200.0f;
-	// 初期化
-	viewProjection_.Initialize();
+	
+		// RailCamera
+	    Vector3 rotation = {0.0f, 0.0f, 0.0f};
+	    railCamera_ = new RailCamera();
+	    railCamera_->Initialize(player_->GetWorldPosition(), rotation);
+	    // 親子関係を結ぶ
+	    // 自キャラとレールカメラの親子関係を結ぶ
+	    player_->SetParent(&railCamera_->GetWorldTransform());
+
+		// デバックカメラの生成
+	    debugCamera_ = new DebugCamera(1280, 720);
+
 
 
 	// 軸方向表示の表示を有効化する
@@ -74,19 +105,6 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	//敵/////////////
-const float kEnemySpeed = -0.5f;
-	Vector3 velocity(0, 0, kEnemySpeed);
-	Vector3 enemyPosition(0, 1.0, 100);
-
-	enemyModel_ = Model::Create();
-	enemy_ = new Enemy();
-	enemy_->Initialize(enemyModel_, enemyPosition, velocity);
-	
-	// 敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
-
-	/////////////////////////
 
 }
 
@@ -183,26 +201,26 @@ void GameScene::Update()
 
 	CheckAllCollision();
 
-	Matrix4x4 cameraMatrix = {};
-	cameraMatrix.m[0][0] = 1.0f;
-	cameraMatrix.m[0][1] = 0.0f;
-	cameraMatrix.m[0][2] = 0.0f;
-	cameraMatrix.m[0][3] = 0.0f;
+	//Matrix4x4 cameraMatrix = {};
+	//cameraMatrix.m[0][0] = 1.0f;
+	//cameraMatrix.m[0][1] = 0.0f;
+	//cameraMatrix.m[0][2] = 0.0f;
+	//cameraMatrix.m[0][3] = 0.0f;
 
-	cameraMatrix.m[1][0] = 0.0f;
-	cameraMatrix.m[1][1] = 1.0f;
-	cameraMatrix.m[1][2] = 0.0f;
-	cameraMatrix.m[1][3] = 0.0f;
+	//cameraMatrix.m[1][0] = 0.0f;
+	//cameraMatrix.m[1][1] = 1.0f;
+	//cameraMatrix.m[1][2] = 0.0f;
+	//cameraMatrix.m[1][3] = 0.0f;
 
-	cameraMatrix.m[2][0] = 0.0f;
-	cameraMatrix.m[2][1] = 0.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 0.0f;
+	//cameraMatrix.m[2][0] = 0.0f;
+	//cameraMatrix.m[2][1] = 0.0f;
+	//cameraMatrix.m[2][2] = 1.0f;
+	//cameraMatrix.m[2][3] = 0.0f;
 
-	cameraMatrix.m[2][0] = 1280.0f;
-	cameraMatrix.m[2][1] = 720.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 1.0f;
+	//cameraMatrix.m[2][0] = 1280.0f;
+	//cameraMatrix.m[2][1] = 720.0f;
+	//cameraMatrix.m[2][2] = 1.0f;
+	//cameraMatrix.m[2][3] = 1.0f;
 
 	#ifdef _DEBUG
 	// デバックの頭文字
@@ -218,8 +236,12 @@ void GameScene::Update()
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
-		// ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
 	}
 
 

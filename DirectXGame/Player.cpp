@@ -15,22 +15,29 @@ Player::~Player()
 }
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, Vector3 position) {
 	assert(model);
 	// 引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
-	this->textureHandle_ = textureHandle;
 
+	textureHandle_ = TextureManager::Load("sample.png");
+	worldTransform_.translation_ = position;
 	// ワールド変数の初期化
 	worldTransform_.Initialize();
 
 	// シングルトンインスタンスを取得
 	input_ = Input::GetInstance();
+
+	//worldTransform_.UpdeateMatrix();
 }
+
+
+
+
 void Player::Update() {
 	////行列を定数バッファに転送する
 	worldTransform_.TransferMatrix();
-
+	
 	////移動ベクトルの設定
 	////基本斜め移動
 
@@ -68,9 +75,7 @@ void Player::Update() {
 	if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y += kRotSpeed;
 	}
-
-	//攻撃
-	Attack();
+	
 
 	for (PlayerBullet* bullet : bullets_) 
 	{
@@ -93,8 +98,10 @@ void Player::Update() {
 	worldTransform_.matWorld_ = MakeAffineMatrix(
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
-	worldTransform_.TransferMatrix();
-	
+	//worldTransform_.TransferMatrix();
+	worldTransform_.UpdeateMatrix();
+	// 攻撃
+	Attack();
 	
 	//弾の寿命
 	bullets_.remove_if([](PlayerBullet* bullet)
@@ -108,7 +115,7 @@ void Player::Update() {
 
 	});
 
-
+	
 	// 画面に座標を出す
 	ImGui::Begin("Player");
 
@@ -130,7 +137,7 @@ void Player::Attack()
 		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initalize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initalize(model_, GetWorldPosition(), velocity);
 
 		
 
@@ -161,4 +168,12 @@ Vector3 Player::GetWorldPosition()
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
+}
+
+
+
+void Player::SetParent(const WorldTransform* parent) {
+
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
 }
