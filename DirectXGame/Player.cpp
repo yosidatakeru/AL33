@@ -40,12 +40,12 @@ void Player::Update() {
 	
 	////移動ベクトルの設定
 	////基本斜め移動
-
-	////キャラクターの移動ベクトル
-	Vector3 move = {0.0f, 0.0f, 0.0f};
-
 	////キャラクターの移動速度
-	const float kCharacterSpeed = 0.2f;
+	const float kCharacterSpeed = 0.02f;
+	////キャラクターの移動ベクトル
+	Vector3 move = {0.0f, 0.0f, kCharacterSpeed};
+
+	
 
 	////押した方向で移動ベクトルを変更（左右）
 	if (input_->PushKey(DIK_LEFT)) {
@@ -119,9 +119,10 @@ void Player::Update() {
 	// 画面に座標を出す
 	ImGui::Begin("Player");
 
-	ImGui::InputFloat3("PlayerPosition", &worldTransform_.translation_.x);
+	ImGui::InputFloat3(
+	    "PlayerPosition", &worldTransform_.translation_.x );
 	ImGui::SliderFloat3("PlayerSlide", &worldTransform_.translation_.x, -20.0f, 30.0f);
-
+	ImGui::InputFloat3("PlayerPosition", &worldTransform_.rotation_.x);
 	ImGui::End();
 }
 

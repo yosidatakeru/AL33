@@ -17,10 +17,10 @@ void RailCamera::Initialize(Vector3 translation, Vector3 rotation) {
 void RailCamera::Update() {
 
 	// ワールドトランスフォームの加算
-	Vector3 move = {0.00f, 0.0f, -0.0f};
+	Vector3 move = {0.00f, 0.0f, 0.05f};
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
-	Vector3 rotate = {0.0f, 0.0005f, 0.0f};
+	Vector3 rotate = {0.0f, 0.0f, 0.00f};
 	worldTransform_.rotation_ = Add(worldTransform_.rotation_, rotate);
 
 	// ワールドトランスフォームのワールド行列再計算
