@@ -11,6 +11,7 @@ class Enemy
 public:
 	~Enemy();
 
+
 	Vector3 velocity_;
 	//	//Vector3 velociy_;
 	//	/// <summary>
