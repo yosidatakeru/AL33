@@ -5,14 +5,6 @@
 
 
 
-// デストラクタ
-Player::~Player() 
-{
-	//for (PlayerBullet* bullet : bullets_) 
-	//{
-	//	delete bullet;
-	//}
-}
 
 
 void Player::Initialize(Model* model, uint32_t textureHandle) {

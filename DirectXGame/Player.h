@@ -10,7 +10,7 @@ class Player {
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~Player();
+	
 	/// <summary>
 	/// 自キャラ
 	/// </summary>
@@ -33,7 +33,7 @@ public:
 	/// <summary>
 	// 攻撃
 	/// </summary>
-	void Attack();
+	//void Attack();
 
 	//// 弾
 	std::list<PlayerBullet*> bullets_;
@@ -43,7 +43,7 @@ private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
-	Player* player_ = nullptr;
+	//Player* player_ = nullptr;
 	// キーボード入力
 	Input* input_ = nullptr;
 	// 弾

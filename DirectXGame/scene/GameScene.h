@@ -48,8 +48,12 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-	std::unique_ptr<Model> model_;
-	uint32_t textureHandle_ = 0;
+
+
+	
+	
+	
+   uint32_t textureHandle_ = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
@@ -57,8 +61,8 @@ private: // メンバ変数
 	
 	
 
-
-	std::unique_ptr<Player> player_;
+   std::unique_ptr<Model> playerModel_;
+	std::unique_ptr<Player> player_ ;
 
 
 	Model* enemyModel_ = nullptr;

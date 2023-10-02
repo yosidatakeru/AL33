@@ -22,13 +22,13 @@ void GameScene::Initialize() {
 
 	
 	// 3Dモデルの生成
-	model_.reset(Model::Create());
+	playerModel_.reset(Model::Create());
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
-	player_->Initialize(model_.get(), textureHandle_);
+	player_->Initialize(playerModel_.get(), textureHandle_);
 
 	
 
@@ -42,7 +42,7 @@ void GameScene::Initialize() {
 //	//enemy_->Initialize(enemyModel_, enemyPosition, velocity);
 	/////////////////////////
 
-	// デバックカメラの生成
+	 //デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
 
 	// 軸方向表示の表示を有効化する
@@ -69,26 +69,6 @@ void GameScene::Update() {
 	// 敵
 	/*enemy_->Update();*/
 
-	Matrix4x4 cameraMatrix = {};
-	cameraMatrix.m[0][0] = 1.0f;
-	cameraMatrix.m[0][1] = 0.0f;
-	cameraMatrix.m[0][2] = 0.0f;
-	cameraMatrix.m[0][3] = 0.0f;
-
-	cameraMatrix.m[1][0] = 0.0f;
-	cameraMatrix.m[1][1] = 1.0f;
-	cameraMatrix.m[1][2] = 0.0f;
-	cameraMatrix.m[1][3] = 0.0f;
-
-	cameraMatrix.m[2][0] = 0.0f;
-	cameraMatrix.m[2][1] = 0.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 0.0f;
-
-	cameraMatrix.m[2][0] = 1280.0f;
-	cameraMatrix.m[2][1] = 720.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 1.0f;
 
 	#ifdef _DEBUG
 	// デバックの頭文字
