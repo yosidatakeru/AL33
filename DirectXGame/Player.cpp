@@ -8,10 +8,10 @@
 // デストラクタ
 Player::~Player() 
 {
-	for (PlayerBullet* bullet : bullets_) 
-	{
-		delete bullet;
-	}
+	//for (PlayerBullet* bullet : bullets_) 
+	//{
+	//	delete bullet;
+	//}
 }
 
 
@@ -20,7 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	// 引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
-
+	textureHandle_ = TextureManager::Load("sample.png");
 	// ワールド変数の初期化
 	worldTransform_.Initialize();
 
@@ -70,12 +70,12 @@ void Player::Update() {
 	}
 
 	//攻撃
-	Attack();
+	/*Attack();
 
 	for (PlayerBullet* bullet : bullets_) 
 	{
 		bullet->Update();
-	}
+	}*/
 	
 
 	// 移動の限界
@@ -96,17 +96,17 @@ void Player::Update() {
 	worldTransform_.TransferMatrix();
 	
 	
-	//弾の寿命
-	bullets_.remove_if([](PlayerBullet* bullet)
-		{
-		if (bullet->IsDead()) 
-		{
-			delete bullet;
-			return true;
-		}
-		return false;
+	////弾の寿命
+	//bullets_.remove_if([](PlayerBullet* bullet)
+	//	{
+	//	if (bullet->IsDead()) 
+	//	{
+	//		delete bullet;
+	//		return true;
+	//	}
+	//	return false;
 
-	});
+	//});
 
 
 	// 画面に座標を出す
@@ -118,34 +118,34 @@ void Player::Update() {
 	ImGui::End();
 }
 
-void Player::Attack() 
-{
-
-	if (input_->TriggerKey(DIK_SPACE)) 
-	{
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-
-
-		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
-		// 弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initalize(model_, worldTransform_.translation_, velocity);
-
-		
-
-		// 弾を登録する
-		bullets_.push_back(newBullet);
-	}
-}
+//void Player::Attack() 
+//{
+//
+//	if (input_->TriggerKey(DIK_SPACE)) 
+//	{
+//		const float kBulletSpeed = 1.0f;
+//		Vector3 velocity(0, 0, kBulletSpeed);
+//
+//
+//		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+//		// 弾を生成し、初期化
+//		PlayerBullet* newBullet = new PlayerBullet();
+//		newBullet->Initalize(model_, worldTransform_.translation_, velocity);
+//
+//		
+//
+//		// 弾を登録する
+//		bullets_.push_back(newBullet);
+//	}
+//}
 
 void Player::Draw(ViewProjection& viewProjection_) {
 	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	
 	
-	for (PlayerBullet* bullet : bullets_) 
+	/*for (PlayerBullet* bullet : bullets_) 
 	{
 		bullet->Draw(viewProjection_);
-	}
+	}*/
 
 }

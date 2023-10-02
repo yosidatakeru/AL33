@@ -5,15 +5,9 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {
-	// モデルの開放
-	delete model_;
-	// 自キャラの解放
-	//delete player_;
-	delete debugCamera_;
-
-	  /// delete enemy_;
-	delete enemy_;
+GameScene::~GameScene()
+{
+	
 }
 
 void GameScene::Initialize() {
@@ -22,17 +16,31 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("sample.png");
+	
+
+	
 
 	
 	// 3Dモデルの生成
-	model_ = Model::Create();
+	model_.reset(Model::Create());
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	// 自キャラの生成
-	player_ = new Player();
+	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_.get(), textureHandle_);
+
+	
+
+	//敵/////////////
+//const float kEnemySpeed = -0.5f;
+//	Vector3 velocity(0, 0, kEnemySpeed);
+//	Vector3 enemyPosition(0, 1.0, 100);
+//
+//	//enemyModel_ = Model::Create();
+//	//enemy_ = new Enemy();
+//	//enemy_->Initialize(enemyModel_, enemyPosition, velocity);
+	/////////////////////////
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
@@ -42,17 +50,15 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	//敵/////////////
-const float kEnemySpeed = -0.5f;
-	Vector3 velocity(0, 0, kEnemySpeed);
-	Vector3 enemyPosition(0, 1.0, 100);
-
-	enemyModel_ = Model::Create();
-	enemy_ = new Enemy();
-	enemy_->Initialize(enemyModel_, enemyPosition, velocity);
-	/////////////////////////
 
 }
+
+
+
+
+
+
+
 
 void GameScene::Update() {
 	// 自キャラの更新
@@ -61,7 +67,7 @@ void GameScene::Update() {
 	debugCamera_->Update();
 
 	// 敵
-	enemy_->Update();
+	/*enemy_->Update();*/
 
 	Matrix4x4 cameraMatrix = {};
 	cameraMatrix.m[0][0] = 1.0f;
@@ -105,6 +111,15 @@ void GameScene::Update() {
 
 }
 
+
+
+
+
+
+
+
+
+
 void GameScene::Draw() {
 
 	;
@@ -133,7 +148,7 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 
 	// 敵の描画
-	enemy_->Draw(viewProjection_);
+	/*enemy_->Draw(viewProjection_);*/
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>

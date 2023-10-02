@@ -11,6 +11,7 @@
 #include "WorldTransform.h"
 #include <DebugCamera.h>
 #include"Enemy.h"
+#include <memory>
 
 /// <summary>
 /// ゲームシーン
@@ -44,20 +45,27 @@ public: // メンバ関数
 	void Draw();
 
 private: // メンバ変数
-	DirectXCommon* dxCommon_ = nullptr;
+	ViewProjection viewProjection_;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-
+	std::unique_ptr<Model> model_;
+	uint32_t textureHandle_ = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
 	// 3Dモデル
-	Model* model_ = nullptr;
-	uint32_t textureHandle_ = 0;
-	ViewProjection viewProjection_;
-	Player* player_ = nullptr;
-	bool isDebgCameraActive_ = false;
-	DebugCamera* debugCamera_ = nullptr;
+	
+	
+
+
+	std::unique_ptr<Player> player_;
+
+
 	Model* enemyModel_ = nullptr;
 	Enemy* enemy_ = nullptr;
+
+	DirectXCommon* dxCommon_ = nullptr;
+	bool isDebgCameraActive_ = false;
+	DebugCamera* debugCamera_ = nullptr;
+	
 };
