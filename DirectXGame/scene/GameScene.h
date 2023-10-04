@@ -4,15 +4,15 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
-#include "Player.h"
+#include"Obj/Player/Player.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DebugCamera.h>
 #include"Enemy.h"
-#include"Skydome.h"
-#include "Ground.h"
+#include"Obj/Skydome/Skydome.h"
+#include "Obj/Ground/Ground.h"
 
 #include <memory>
 

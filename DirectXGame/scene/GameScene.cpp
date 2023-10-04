@@ -28,6 +28,7 @@ void GameScene::Initialize() {
 	player_ = std::make_unique<Player>();
 
 	// テクスチャ読み込み
+	//プレイヤーの場合テクスチャの読み取りが必要
 	textureHandle_ = TextureManager::Load("Player/tex.png");
 	// 3Dモデルの生成
 	playerModel_.reset(Model::CreateFromOBJ("Player",true));
