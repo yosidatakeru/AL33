@@ -16,15 +16,15 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	
-
+    worldTransform_.Initialize();
+	// ビュープロジェクションの初期化
+	viewProjection_.Initialize();
 	
 
 	
 	// 3Dモデルの生成
 	playerModel_.reset(Model::Create());
-	// ビュープロジェクションの初期化
-	viewProjection_.Initialize();
+	
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
@@ -41,6 +41,48 @@ void GameScene::Initialize() {
 //	//enemy_ = new Enemy();
 //	//enemy_->Initialize(enemyModel_, enemyPosition, velocity);
 	/////////////////////////
+
+
+	// 生成
+	skydome_ = std::make_unique<Skydome>();
+
+	// フォルダの名前を指定してね
+
+	skydomeModel_.reset(Model::CreateFromOBJ("CelestialSphere", true));
+
+	// テクスチャ読み込み
+	 //skydomeTextureHandle_ = TextureManager::Load("CelestialSphere/uvChecker.png");
+
+	// 天球の初期化
+	skydome_->Initialize(skydomeModel_.get(), skydomeTextureHandle_);
+
+
+
+	// 生成
+	ground_ = std::make_unique<Ground>();
+
+	// フォルダの名前を指定してね
+
+	gronudModel_.reset(Model::CreateFromOBJ("Ground", true));
+
+	// テクスチャ読み込み
+	
+	// 地面の初期化
+	ground_->Initialize(gronudModel_.get(), GroundTextureHandle_);
+
+
+
+
+	// ビュープロジェクション
+	// forZを適度に大きい値に変更する
+	// 大きくしすぎるとZファイティングになるよ
+	viewProjection_.farZ = 1200.0f;
+	// 初期化
+	viewProjection_.Initialize();
+
+
+
+
 
 	 //デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
@@ -66,6 +108,11 @@ void GameScene::Update() {
 
 	debugCamera_->Update();
 
+	//天球
+	skydome_->Update();
+
+	// 天球
+	ground_->Update();
 	// 敵
 	/*enemy_->Update();*/
 
@@ -100,9 +147,10 @@ void GameScene::Update() {
 
 
 
-void GameScene::Draw() {
+void GameScene::Draw()
+{
 
-	;
+	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -127,6 +175,12 @@ void GameScene::Draw() {
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
 
+
+	//天球
+	skydome_->Draw(viewProjection_);
+
+	//地面
+	ground_->Draw(viewProjection_);
 	// 敵の描画
 	/*enemy_->Draw(viewProjection_);*/
 	/// <summary>

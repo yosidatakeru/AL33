@@ -11,6 +11,9 @@
 #include "WorldTransform.h"
 #include <DebugCamera.h>
 #include"Enemy.h"
+#include"Skydome.h"
+#include "Ground.h"
+
 #include <memory>
 
 /// <summary>
@@ -48,7 +51,8 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
-
+	// ワールドトランスフォーム
+	WorldTransform worldTransform_;
 
 	
 	
@@ -68,8 +72,38 @@ private: // メンバ変数
 	Model* enemyModel_ = nullptr;
 	Enemy* enemy_ = nullptr;
 
+
+	#pragma region 天球のメンバ変数
+	// テクスチャハンドル
+	uint32_t skydomeTextureHandle_ = 0u;
+
+	// 3Dモデル
+	std::unique_ptr<Model> skydomeModel_;
+
+
+	// 天球ポインタ
+	std::unique_ptr<Skydome> skydome_;
+
+
+
+	//地面
+	//  テクスチャハンドル
+	uint32_t GroundTextureHandle_ = 0u;
+
+
+	
+	// 3Dモデル
+	std::unique_ptr<Model> gronudModel_;
+
+	// 地面ポインタ
+	std::unique_ptr<Ground> ground_;
+
+
+
 	DirectXCommon* dxCommon_ = nullptr;
 	bool isDebgCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 	
+
+
 };

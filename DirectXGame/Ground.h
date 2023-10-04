@@ -1,10 +1,11 @@
 ﻿#pragma once
-#include <Model.h>
-#include <WorldTransform.h>
+#include"Model.h"
+#include"WorldTransform.h"
 
-class Skydome 
+class Ground 
 {
 public:
+	
 	// 初期化
 	void Initialize(Model* model, uint32_t textureHandle);
 
@@ -22,4 +23,9 @@ private:
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+
+
+
+
 };
+

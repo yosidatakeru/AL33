@@ -1,25 +1,19 @@
-﻿#include "Skydome.h"
+﻿#include "Ground.h"
 #include <Function.h>
 // 初期化
-void Skydome::Initialize(Model* model, uint32_t textureHandle) 
-{
+void Ground::Initialize(Model* model, uint32_t textureHandle) {
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
-
-	
 
 	// ワールド変数の初期化
 	worldTransform_.Initialize();
 }
 
 // 更新
-void Skydome::Update()
-{
+void Ground::Update() {
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
-
-
 
 	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
 
@@ -28,10 +22,12 @@ void Skydome::Update()
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	// 更新処理
-	//worldTransform_.UpdeateMatrix();
+	// worldTransform_.UpdeateMatrix();
 }
 
 // 描画
-void Skydome::Draw(ViewProjection& viewProjection) {
+void Ground::Draw(ViewProjection& viewProjection) 
+{
+
 	model_->Draw(worldTransform_, viewProjection);
 }
