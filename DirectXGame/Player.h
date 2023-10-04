@@ -36,7 +36,7 @@ public:
 	//void Attack();
 
 	//// 弾
-	std::list<PlayerBullet*> bullets_;
+	//std::list<PlayerBullet*> bullets_;
 
 private:
 	// ワールド変換データ
@@ -45,8 +45,8 @@ private:
 	uint32_t textureHandle_ = 0u;
 	//Player* player_ = nullptr;
 	// キーボード入力
-	Input* input_ = nullptr;
+	//Input* input_ = nullptr;
 	// 弾
-	PlayerBullet* bullet_ = nullptr;
+	//PlayerBullet* bullet_ = nullptr;
 	//Vector3 velociy_;
 };

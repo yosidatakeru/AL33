@@ -22,11 +22,17 @@ void GameScene::Initialize() {
 	
 
 	
-	// 3Dモデルの生成
-	playerModel_.reset(Model::Create());
 	
+	//newの代わり
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
+
+	// テクスチャ読み込み
+	textureHandle_ = TextureManager::Load("Player/tex.png");
+	// 3Dモデルの生成
+	playerModel_.reset(Model::CreateFromOBJ("Player",true));
+
+
 	// 自キャラの初期化
 	player_->Initialize(playerModel_.get(), textureHandle_);
 
