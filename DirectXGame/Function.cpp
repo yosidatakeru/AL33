@@ -247,3 +247,22 @@ Vector3 Normalize(const Vector3& v) {
 	}
 	return result;
 }
+
+Vector3 NormalizeVector3(Vector3& v1) {
+	Vector3 result = {};
+
+	float length = Length(v1);
+
+	result.x = v1.x;
+	result.y = v1.y;
+	result.z = v1.z;
+
+	if (length != 0.0f) {
+		result.x = v1.x / length;
+		result.y = v1.y / length;
+		result.z = v1.z / length;
+	}
+
+	return result;
+}
+
