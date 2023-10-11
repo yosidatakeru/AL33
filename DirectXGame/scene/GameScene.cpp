@@ -230,24 +230,19 @@ void GameScene::Update() {
 	cameraMatrix.m[2][2] = 1.0f;
 	cameraMatrix.m[2][3] = 1.0f;
 
-	#ifdef _DEBUG
+	
 	// デバックの頭文字
 	if (input_->TriggerKey(DIK_Q)) {
-		isDebgCameraActive_ = true;
-	}
-
-#endif
-	if (isDebgCameraActive_) {
-		railCamera_->Update();
-		
-		viewProjection_.matView = railCamera_->viewProjection_.matView;
-		viewProjection_.matProjection = railCamera_->viewProjection_.matProjection;
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
 		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
+	
 
 
 }

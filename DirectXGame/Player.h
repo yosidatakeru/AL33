@@ -8,6 +8,7 @@
 #include<Sprite.h>
 class Player {
 
+	Vector3 Get3DReticleWorldPosition();
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -134,5 +135,5 @@ public:
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState_;
 
-
+	int32_t count_ = 0;
 };

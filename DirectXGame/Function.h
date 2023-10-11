@@ -40,3 +40,8 @@ Matrix4x4 MakeViewportMatrix(
 
 // 座標変換
 Vector3 Transform(Vector3 vector, Matrix4x4 matrix);
+
+
+
+
+Vector3 NormalizeVector3(Vector3& v1);
