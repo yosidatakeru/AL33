@@ -27,7 +27,6 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 
-	
 	// テクスチャ読み込み
 	//プレイヤーの場合テクスチャの読み取りが必要
 	textureHandle_ = TextureManager::Load("Player/tex.png");
@@ -39,7 +38,17 @@ void GameScene::Initialize() {
 	player_->Initialize(playerModel_.get(), textureHandle_);
 
 	
-	
+
+	//敵/////////////
+//const float kEnemySpeed = -0.5f;
+//	Vector3 velocity(0, 0, kEnemySpeed);
+//	Vector3 enemyPosition(0, 1.0, 100);
+//
+//	//enemyModel_ = Model::Create();
+//	//enemy_ = new Enemy();
+//	//enemy_->Initialize(enemyModel_, enemyPosition, velocity);
+	/////////////////////////
+
 
 	// 生成
 	skydome_ = std::make_unique<Skydome>();
@@ -85,20 +94,8 @@ void GameScene::Initialize() {
 	 //デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
 
-
-
-	//追従カメラ
-
 	followCamera_ = std::make_unique<FollowCamera>();
 
-	followCamera_->Initialize();
-
-	player_->SetViewProjection(&followCamera_->GetViewProlection());
-	//自キャラのワールドトランスフォームを追従カメラセット
-	followCamera_->SetTarget(&player_->GetWorldTransform());	
-	
-	
-	
 	// 軸方向表示の表示を有効化する
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
@@ -114,8 +111,7 @@ void GameScene::Initialize() {
 
 
 
-void GameScene::Update() 
-{
+void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 
@@ -129,101 +125,92 @@ void GameScene::Update()
 	// 敵
 	/*enemy_->Update();*/
 
-	
+	//カメラ
+	followCamera_->Update();
+
+	#ifdef _DEBUG
+	// デバックの頭文字
+	if (input_->TriggerKey(DIK_Q)) {
+		isDebgCameraActive_ = true;
+	}
+
+#endif
+	if (isDebgCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		// ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+void GameScene::Draw()
+{
 
 	
-	// デバックの頭文字
-	 if (input_->TriggerKey(DIK_Q)) 
-	 {
-	 	isDebgCameraActive_ = true;
-	 }
- 
-	 if (isDebgCameraActive_)
-	 {
-	 	debugCamera_->Update();
-	 	viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-	 	viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-	 	
-	 } else 
-	 {
-		// カメラ
-		followCamera_->Update();
-		viewProjection_.matView = followCamera_->GetViewProlection().matView;
-		viewProjection_.matProjection = followCamera_->GetViewProlection().matProjection;
-	 	// ビュープロジェクション行列の更新と転送
-	 	//viewProjection_.UpdateMatrix();
-	 }
-	 // ビュープロジェクション行列の転送
-	 viewProjection_.TransferMatrix();
- 
-} 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-void  GameScene::Draw()
-{ 
- 
-	 
-	 // コマンドリストの取得
-	 ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
- 
+	// コマンドリストの取得
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
 #pragma region 背景スプライト描画
-	 // 背景スプライト描画前処理
-	 Sprite::PreDraw(commandList);
- 
- 
-	 /// <summary>
-	 /// ここに背景スプライトの描画処理を追加できる
-	 /// </summary>
- 
-	 // スプライト描画後処理
-	 Sprite::PostDraw();
-	 // 深度バッファクリア
-	 dxCommon_->ClearDepthBuffer();
+	// 背景スプライト描画前処理
+	Sprite::PreDraw(commandList);
+
+
+	/// <summary>
+	/// ここに背景スプライトの描画処理を追加できる
+	/// </summary>
+
+	// スプライト描画後処理
+	Sprite::PostDraw();
+	// 深度バッファクリア
+	dxCommon_->ClearDepthBuffer();
 #pragma endregion
-	
-	
- 
+
 #pragma region 3Dオブジェクト描画
-	 // 3Dオブジェクト描画前処理
-	 Model::PreDraw(commandList);
-	 // 自キャラの描画
-	 player_->Draw(viewProjection_);
- 
- 
-	 //天球
-	 skydome_->Draw(viewProjection_);
- 
-	 //地面
-	 ground_->Draw(viewProjection_);
-	 // 敵の描画
-	 /*enemy_->Draw(viewProjection_);*/
-	 /// <summary>
-	 /// ここに3Dオブジェクトの描画処理を追加できる
-	 /// </summary>
- 
-	 // 3Dオブジェクト描画後処理
-	 Model::PostDraw();
+	// 3Dオブジェクト描画前処理
+	Model::PreDraw(commandList);
+	// 自キャラの描画
+	player_->Draw(viewProjection_);
+
+
+	//天球
+	skydome_->Draw(viewProjection_);
+
+	//地面
+	ground_->Draw(viewProjection_);
+	// 敵の描画
+	/*enemy_->Draw(viewProjection_);*/
+	/// <summary>
+	/// ここに3Dオブジェクトの描画処理を追加できる
+	/// </summary>
+
+	// 3Dオブジェクト描画後処理
+	Model::PostDraw();
 #pragma endregion
-	
-	
- 
+
 #pragma region 前景スプライト描画
-	 // 前景スプライト描画前処理
-	 Sprite::PreDraw(commandList);
- 
-	 /// <summary>
-	 /// ここに前景スプライトの描画処理を追加できる
-	 /// </summary>
- 
-	 // スプライト描画後処理
+	// 前景スプライト描画前処理
+	Sprite::PreDraw(commandList);
+
+	/// <summary>
+	/// ここに前景スプライトの描画処理を追加できる
+	/// </summary>
+
+	// スプライト描画後処理
 	Sprite::PostDraw();
 
 #pragma endregion

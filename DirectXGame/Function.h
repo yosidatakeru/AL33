@@ -2,6 +2,17 @@
 #include <Matrix4x4.h>
 #include <Vector3.h>
 
+// 代入演算子オーバーロード
+Vector3& operator+=(Vector3& lhs, const Vector3& rhv);
+Vector3& operator/=(Vector3& v, float s);
+
+// 2項演算子オーバーロード
+const Vector3 operator+(const Vector3& v1, const Vector3& v2);
+
+Vector3& operator*=(Vector3& v, float s);
+const Vector3 operator*(const Vector3& v, float s);
+const Vector3 operator/(const Vector3& v, float s);
+
  Vector3 Add(const Vector3 v1, const Vector3 v2);
 Matrix4x4 Multiply(const Matrix4x4 m1, const Matrix4x4 m2);
 
@@ -23,4 +34,17 @@ float Length(const Vector3& v);
 
 Vector3 Normalize(const Vector3& v);
 
+Matrix4x4 Inverse(const Matrix4x4 m);
+
+// 減算
+Vector3 Subtract(const Vector3 v1, const Vector3 v2);
+
+// viewportMatrix
+Matrix4x4 MakeViewportMatrix(
+    float left, float top, float width, float height, float minDepth, float maxDepth);
+
+// 座標変換
+Vector3 Transform(Vector3 vector, Matrix4x4 matrix);
+
 Vector3 NormalizeVector3(Vector3& v1);
+

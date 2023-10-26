@@ -112,6 +112,8 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MathUtilityForText\MathUtilityForText.cpp" />
+    <ClCompile Include="Obj\Camera\FollowCamera.cpp" />
     <ClCompile Include="Obj\Ground\Ground.cpp" />
     <ClCompile Include="Obj\Player\Player.cpp" />
     <ClCompile Include="Obj\Skydome\Skydome.cpp" />
@@ -146,10 +148,12 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="input\Input.h" />
+    <ClInclude Include="MathUtilityForText\MathUtilityForText.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="Obj\Camera\FollowCamera.h" />
     <ClInclude Include="Obj\Ground\Ground.h" />
     <ClInclude Include="Obj\Player\Player.h" />
     <ClInclude Include="Obj\Skydome\Skydome.h" />

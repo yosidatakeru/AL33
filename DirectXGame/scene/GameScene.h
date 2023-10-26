@@ -15,11 +15,13 @@
 #include "Obj/Ground/Ground.h"
 
 #include <memory>
+#include <Obj/Camera/FollowCamera.h>
 
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene 
+{
 
 public: // メンバ関数
 	/// <summary>
@@ -63,15 +65,20 @@ private: // メンバ変数
 	/// </summary>
 	// 3Dモデル
 	
-	
-
+	#pragma region 敵
    std::unique_ptr<Model> playerModel_;
-	std::unique_ptr<Player> player_ ;
+   std::unique_ptr<Player> player_;
+   
+#pragma endregion
 
+
+
+	#pragma region 敵
 
 	Model* enemyModel_ = nullptr;
 	Enemy* enemy_ = nullptr;
 
+	#pragma endregion
 
 	#pragma region 天球のメンバ変数
 	// テクスチャハンドル
@@ -84,25 +91,33 @@ private: // メンバ変数
 	// 天球ポインタ
 	std::unique_ptr<Skydome> skydome_;
 
+	#pragma endregion
 
-
-	//地面
-	//  テクスチャハンドル
-	uint32_t GroundTextureHandle_ = 0u;
+#pragma region 地面
+//  テクスチャハンドル
+uint32_t GroundTextureHandle_ = 0u;
 
 
 	
-	// 3Dモデル
-	std::unique_ptr<Model> gronudModel_;
+// 3Dモデル
+std::unique_ptr<Model> gronudModel_;
 
-	// 地面ポインタ
-	std::unique_ptr<Ground> ground_;
+// 地面ポインタ
+std::unique_ptr<Ground> ground_;
+
+#pragma endregion
+
+#pragma region カメラ
+
+DirectXCommon* dxCommon_ = nullptr;
+bool isDebgCameraActive_ = false;
+DebugCamera* debugCamera_ = nullptr;
+
+ std::unique_ptr<FollowCamera> followCamera_ ; 
 
 
-
-	DirectXCommon* dxCommon_ = nullptr;
-	bool isDebgCameraActive_ = false;
-	DebugCamera* debugCamera_ = nullptr;
+#pragma endregion
+	
 	
 
 
