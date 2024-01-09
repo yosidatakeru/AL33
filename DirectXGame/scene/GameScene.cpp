@@ -39,6 +39,8 @@ void GameScene::Initialize() {
 	player_->Initialize(playerModel_.get(), textureHandle_);
 
 	
+
+
 	
 
 	// 生成
