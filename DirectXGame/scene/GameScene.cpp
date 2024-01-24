@@ -26,8 +26,7 @@ void GameScene::Initialize() {
 	//newの代わり
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
-
-	
+    //enemy_->Initialize();
 	// テクスチャ読み込み
 	//プレイヤーの場合テクスチャの読み取りが必要
 	textureHandle_ = TextureManager::Load("Player/tex.png");
@@ -36,12 +35,27 @@ void GameScene::Initialize() {
 	modelFighterHead_.reset(Model::CreateFromOBJ("float_Head", true));
 	modelFighterL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
 	modelFighterR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
+    std::vector<Model*> playerModels = {
+	    modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(),
+	    modelFighterR_arm_.get()};
+
+
 	// 自キャラの初期化
-	player_->Initialize(modelFighterBody_.get(),modelFighterHead_.get(),modelFighterL_arm_.get(),modelFighterR_arm_.get());
+	player_->Initialize(playerModels);
 
 	
 
+
+
+	//敵
+	enemy_ = std::make_unique<Enemy>();
+
+	enemyModel_.reset(Model::CreateFromOBJ("enem", true));
 	
+	 std::vector<Model*> enemyModels = {enemyModel_.get()};
+
+	 enemy_->Initialize(enemyModels);
+
 
 
 
@@ -121,6 +135,9 @@ void GameScene::Update()
 	// 自キャラの更新
 	player_->Update();
 
+	//敵
+	enemy_->Update();
+
 	debugCamera_->Update();
 
 	//天球
@@ -129,7 +146,7 @@ void GameScene::Update()
 	// 天球
 	ground_->Update();
 	// 敵
-	/*enemy_->Update();*/
+	//enemy_->Update();
 
 	
 
@@ -199,14 +216,16 @@ void  GameScene::Draw()
 	 // 自キャラの描画
 	 player_->Draw(viewProjection_);
  
- 
+     //敵
+	 enemy_->Draw(viewProjection_);
+
 	 //天球
 	 skydome_->Draw(viewProjection_);
  
 	 //地面
 	 ground_->Draw(viewProjection_);
 	 // 敵の描画
-	 /*enemy_->Draw(viewProjection_);*/
+	// enemy_->Draw(viewProjection_);
 	 /// <summary>
 	 /// ここに3Dオブジェクトの描画処理を追加できる
 	 /// </summary>

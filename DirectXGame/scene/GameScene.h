@@ -10,7 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DebugCamera.h>
-#include"Enemy.h"
+#include"Obj/Player/Enemy.h"
 #include"Obj/Skydome/Skydome.h"
 #include "Obj/Ground/Ground.h"
 
@@ -65,7 +65,7 @@ private: // メンバ変数
 	/// </summary>
 	// 3Dモデル
 	
-	#pragma region 敵
+	#pragma region プレイヤー
    std::unique_ptr<Model> playerModel_;
    std::unique_ptr<Player> player_;
    std::unique_ptr<Model> modelFighterBody_ = nullptr;
@@ -77,11 +77,16 @@ private: // メンバ変数
 
 
 	#pragma region 敵
-
-	Model* enemyModel_ = nullptr;
-	Enemy* enemy_ = nullptr;
+   std::unique_ptr<Model> enemyModel_=nullptr;
+   std::unique_ptr<Enemy> enemy_;
+	
+   
 
 	#pragma endregion
+
+
+
+
 
 	#pragma region 天球のメンバ変数
 	// テクスチャハンドル
@@ -96,6 +101,10 @@ private: // メンバ変数
 
 	#pragma endregion
 
+
+
+
+
 #pragma region 地面
 //  テクスチャハンドル
 uint32_t GroundTextureHandle_ = 0u;
@@ -109,6 +118,9 @@ std::unique_ptr<Model> gronudModel_;
 std::unique_ptr<Ground> ground_;
 
 #pragma endregion
+
+
+
 
 #pragma region カメラ
 

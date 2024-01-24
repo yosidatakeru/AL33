@@ -78,9 +78,6 @@
     <ClCompile Include="WorldTransformEx.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Obj\Player\Player.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -94,6 +91,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MathUtilityForText\MathUtilityForText.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj\Player\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Obj\Player\BaseCharacter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,9 +194,6 @@
     <ClInclude Include="PlayerBullet.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Obj\Player\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -207,6 +207,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="MathUtilityForText\MathUtilityForText.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Obj\Player\BaseCharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Obj\Player\Enemy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
