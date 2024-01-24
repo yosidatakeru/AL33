@@ -68,7 +68,10 @@ private: // メンバ変数
 	#pragma region 敵
    std::unique_ptr<Model> playerModel_;
    std::unique_ptr<Player> player_;
-   
+   std::unique_ptr<Model> modelFighterBody_ = nullptr;
+   std::unique_ptr<Model> modelFighterHead_ = nullptr;
+   std::unique_ptr<Model> modelFighterL_arm_ = nullptr;
+   std::unique_ptr<Model> modelFighterR_arm_ = nullptr;
 #pragma endregion
 
 

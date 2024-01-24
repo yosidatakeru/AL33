@@ -32,14 +32,18 @@ void GameScene::Initialize() {
 	//プレイヤーの場合テクスチャの読み取りが必要
 	textureHandle_ = TextureManager::Load("Player/tex.png");
 	// 3Dモデルの生成
-	playerModel_.reset(Model::CreateFromOBJ("Player",true));
-
-
+    modelFighterBody_.reset(Model::CreateFromOBJ("float_Body", true));
+	modelFighterHead_.reset(Model::CreateFromOBJ("float_Head", true));
+	modelFighterL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
+	modelFighterR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
 	// 自キャラの初期化
-	player_->Initialize(playerModel_.get(), textureHandle_);
+	player_->Initialize(modelFighterBody_.get(),modelFighterHead_.get(),modelFighterL_arm_.get(),modelFighterR_arm_.get());
 
 	
+
 	
+
+
 
 	// 生成
 	skydome_ = std::make_unique<Skydome>();
@@ -48,9 +52,7 @@ void GameScene::Initialize() {
 
 	skydomeModel_.reset(Model::CreateFromOBJ("CelestialSphere", true));
 
-	// テクスチャ読み込み
-	 //skydomeTextureHandle_ = TextureManager::Load("CelestialSphere/uvChecker.png");
-
+	
 	// 天球の初期化
 	skydome_->Initialize(skydomeModel_.get(), skydomeTextureHandle_);
 
