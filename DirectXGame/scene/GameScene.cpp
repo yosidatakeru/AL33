@@ -147,8 +147,9 @@ void GameScene::Update()
 	ground_->Update();
 	// 敵
 	//enemy_->Update();
-
 	
+	//当たり判定
+	CheckAllisions();
 
 	
 	// デバックの頭文字
@@ -224,8 +225,7 @@ void  GameScene::Draw()
  
 	 //地面
 	 ground_->Draw(viewProjection_);
-	 // 敵の描画
-	// enemy_->Draw(viewProjection_);
+	
 	 /// <summary>
 	 /// ここに3Dオブジェクトの描画処理を追加できる
 	 /// </summary>
@@ -249,3 +249,36 @@ void  GameScene::Draw()
 
 #pragma endregion
 }
+
+
+
+
+
+
+
+
+// 当たり判定
+void GameScene::CheckAllisions() {
+	// 判定対象AとBの座標
+	Vector3 posA, posB;
+#pragma region 自キャラと敵弾の当たり判定
+
+	// 自キャラの座標
+	posA = player_->GetWorldPosition();
+	posB = enemy_->GetWorldPosition();
+	// 自キャラと敵弾全ての当たり判定
+	
+		float distanceAB = (posB.x - posA.x) * (posB.x - posA.x) +
+	                   (posB.y - posA.y) * (posB.y - posA.y) +
+	                   (posB.z - posA.z) * (posB.z - posA.z);
+
+	
+		float RadiusAB = (player_->GetRadius() + enemy_->GetRadius()) +
+		                 (player_->GetRadius() + enemy_->GetRadius());
+
+
+		if (distanceAB <= RadiusAB)
+		{
+		player_->OnCollsion();
+		}
+	}

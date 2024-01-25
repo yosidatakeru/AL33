@@ -49,6 +49,9 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	//当たり判定
+	void CheckAllisions();
+
 private: // メンバ変数
 	ViewProjection viewProjection_;
 	Input* input_ = nullptr;
