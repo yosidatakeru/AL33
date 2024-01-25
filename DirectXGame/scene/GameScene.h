@@ -52,7 +52,42 @@ public: // メンバ関数
 	//当たり判定
 	void CheckAllisions();
 
+
+	// Update用
+	void TitleScene();
+
+	void ReadyScene();
+
+	void GamePlayScene();
+
+	void ResultScene();
+
+	void WinScene();
+
+	void LoseScene();
+
+
+
+	// 3DObject
+	void TitleDraw3DObjectScene();
+
+	void ReadyDraw3DObjectScene();
+
+	void GamePlayDraw3DObjectScene();
+
+	void ResultDraw3DObjectScene();
+
+	void WinDraw3DObjectScene();
+
+	void LoseDraw3DObjectScene();
+
+
+
 private: // メンバ変数
+
+	int32_t titleTextureNumber_ = 0;
+
+	int32_t titleTexture =0 ;
 	ViewProjection viewProjection_;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
@@ -63,6 +98,34 @@ private: // メンバ変数
 	
 	
    uint32_t textureHandle_ = 0;
+
+	uint32_t titletextureHandle_ = 0;
+ 
+	Sprite* titleSprite_ = nullptr;
+
+	uint32_t eraseHandle_ = 0;
+
+	Sprite* eraseSprite_ = nullptr;
+
+	uint32_t clearHandle_ = 0;
+
+	uint32_t cleartureHandle_ = 0;
+
+	Sprite* clearSprite_ = nullptr;
+
+	uint32_t explanationHandle_ = 0;
+
+	Sprite* explanationSprite_ = nullptr;
+
+	uint32_t loseHandle_ = 0;
+
+	Sprite* loseSprite_ = nullptr;
+
+	int32_t TimeLimit = 1200;
+
+	int32_t titleTimeLimit = 240;
+	
+	int32_t titleTime = 240;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
@@ -136,7 +199,96 @@ DebugCamera* debugCamera_ = nullptr;
 
 #pragma endregion
 	
-	
+	enum class Scene {
+	 // タイトル
+	 Title,
 
+	 // カウントダウン
+	 Ready,
+
+	 // ゲーム
+	 Game,
+
+	 // 結果
+	 Result,
+
+	 // 勝ち
+	 Win,
+
+	 // 負け
+	 Lose,
+
+ };
+
+ Scene scene_ = Scene();
+
+
+ 	enum class DrawSpriteScene 
+	{
+	 // タイトル
+	 Title,
+
+	 // カウントダウン
+	 Ready,
+
+	 // ゲーム
+	 Game,
+
+	 // 結果
+	 Result,
+
+	 // 勝ち
+	 Win,
+
+	 // 負け
+	 Lose,
+ };
+
+ DrawSpriteScene drawSpriteScene_ = DrawSpriteScene();
+
+ enum class Draw3DObjectScene {
+	 // タイトル
+	 Title,
+
+	 // カウントダウン
+	 Ready,
+
+	 // ゲーム
+	 Game,
+
+	 // 結果
+	 Result,
+
+	 // 勝ち
+	 Win,
+
+	 // 負け
+	 Lose,
+ };
+
+ Draw3DObjectScene draw3DObjectScene_ = Draw3DObjectScene();
+
+
+ enum class Draw2DObjectScene {
+	 // タイトル
+	 Title,
+
+	 // カウントダウン
+	 Ready,
+
+	 // ゲーム
+	 Game,
+
+	 // 結果
+	 Result,
+
+	 // 勝ち
+	 Win,
+
+	 // 負け
+	 Lose,
+ };
+
+ Draw2DObjectScene draw2DObjectScene_ = Draw2DObjectScene();
 
 };

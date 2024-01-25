@@ -3,11 +3,16 @@
 #include <cassert>
 #include "AxisIndicator.h"
 
+#include <imgui.h>
+
+
 GameScene::GameScene() {}
 
+
 GameScene::~GameScene()
-{
-	
+{ delete titleSprite_;
+	delete clearSprite_;
+	delete explanationSprite_;
 }
 
 void GameScene::Initialize() {
@@ -20,9 +25,10 @@ void GameScene::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	
-
-	
-	
+	titleTexture = 0;
+	titleTextureNumber_ = 1;
+	titleTimeLimit = 240;
+	titleTime = 240;
 	//newの代わり
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
@@ -39,6 +45,23 @@ void GameScene::Initialize() {
 	    modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(),
 	    modelFighterR_arm_.get()};
 
+	//タイトル
+	titletextureHandle_ = TextureManager::Load("title.png");
+	titleSprite_ = Sprite::Create(titletextureHandle_, {100, 50,});
+
+	eraseHandle_ = TextureManager::Load("title2.png");
+	eraseSprite_ = Sprite::Create(eraseHandle_,{ 100,50,});
+
+	
+	//クリア画面
+	 cleartureHandle_ = TextureManager::Load("clear.png");
+	clearSprite_ = Sprite::Create(cleartureHandle_, {100, 50});
+	
+	loseHandle_ = TextureManager::Load("defeat.png");
+	loseSprite_ = Sprite::Create(loseHandle_, {100, 50});
+	//操作説明
+	explanationHandle_ = TextureManager::Load("explanation.png");
+	explanationSprite_ = Sprite::Create(explanationHandle_, {100, 50});
 
 	// 自キャラの初期化
 	player_->Initialize(playerModels);
@@ -120,6 +143,7 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
+	TimeLimit = 1200;
 
 }
 
@@ -132,57 +156,39 @@ void GameScene::Initialize() {
 
 void GameScene::Update() 
 {
-	// 自キャラの更新
-	player_->Update();
 
-	//敵
-	enemy_->Update();
+	switch (scene_) {
+	case Scene::Title:
+	default:
+		TitleScene();
+		break;
 
-	debugCamera_->Update();
+	case Scene::Ready:
+		ReadyScene();
+		
+		break;
 
-	//天球
-	skydome_->Update();
+	case Scene::Game:
+		GamePlayScene();
+		break;
 
-	// 天球
-	ground_->Update();
-	// 敵
-	//enemy_->Update();
+	case Scene::Result:
+		ResultScene();
+		break;
+
+	case Scene::Win:
+		WinScene();
+		break;
+
+	case Scene::Lose:
+
+		LoseScene();
+		break;
+	}
+
+
 	
-	//当たり判定
-	CheckAllisions();
-
-	
-	// デバックの頭文字
-	 if (input_->TriggerKey(DIK_Q)) 
-	 {
-	 	isDebgCameraActive_ = true;
-	 }
- 
-	 if (isDebgCameraActive_)
-	 {
-	 	debugCamera_->Update();
-	 	viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-	 	viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-	 	
-	 } else 
-	 {
-		// カメラ
-		followCamera_->Update();
-		viewProjection_.matView = followCamera_->GetViewProlection().matView;
-		viewProjection_.matProjection = followCamera_->GetViewProlection().matProjection;
-	 	// ビュープロジェクション行列の更新と転送
-	 	//viewProjection_.UpdateMatrix();
-	 }
-	 // ビュープロジェクション行列の転送
-	 viewProjection_.TransferMatrix();
- 
 } 
- 
- 
- 
- 
- 
- 
  
  
  
@@ -197,7 +203,59 @@ void  GameScene::Draw()
 #pragma region 背景スプライト描画
 	 // 背景スプライト描画前処理
 	 Sprite::PreDraw(commandList);
- 
+
+	  switch (draw2DObjectScene_) {
+	 case Draw2DObjectScene::Title:
+
+	 default:
+		if (titleTexture == 0) 
+		{
+
+			if (titleTimeLimit >= 120) 
+			{
+				titleSprite_->Draw();
+			} else {
+				eraseSprite_->Draw();
+			}
+		} 
+		else if (titleTime%8<=0)
+		{
+			eraseSprite_->Draw();
+		}
+		else 
+		{
+			titleSprite_->Draw();
+		}
+		
+
+
+		break;
+
+	 case Draw2DObjectScene::Ready:
+		explanationSprite_->Draw();
+		
+		break;
+
+	 case Draw2DObjectScene::Game:
+		//GamePlayDraw2DObjectScene();
+		break;
+
+	 case Draw2DObjectScene::Result:
+		//ResultDraw2DObjectScene();
+		break;
+
+	 case Draw2DObjectScene::Win:
+		clearSprite_->Draw();
+		 
+		break;
+
+	 case Draw2DObjectScene::Lose:
+		loseSprite_->Draw();
+		break;
+	 }
+	
+	
+	 
  
 	 /// <summary>
 	 /// ここに背景スプライトの描画処理を追加できる
@@ -211,25 +269,58 @@ void  GameScene::Draw()
 	
 	
  
+
+
+
+
+
 #pragma region 3Dオブジェクト描画
 	 // 3Dオブジェクト描画前処理
 	 Model::PreDraw(commandList);
-	 // 自キャラの描画
-	 player_->Draw(viewProjection_);
- 
-     //敵
-	 enemy_->Draw(viewProjection_);
+	 
 
-	 //天球
-	 skydome_->Draw(viewProjection_);
- 
-	 //地面
-	 ground_->Draw(viewProjection_);
+
+	 switch (draw3DObjectScene_) {
+	 case Draw3DObjectScene::Title:
+		
+	 default:
+		TitleDraw3DObjectScene();
+		break;
+
+	 case Draw3DObjectScene::Ready:
+		ReadyDraw3DObjectScene();
+		break;
+
+	 case Draw3DObjectScene::Game:
+		GamePlayDraw3DObjectScene();
+		break;
+
+	 case Draw3DObjectScene::Result:
+		ResultDraw3DObjectScene();
+		break;
+
+	 case Draw3DObjectScene::Win:
+		WinDraw3DObjectScene();
+		break;
+
+	 case Draw3DObjectScene::Lose:
+		LoseDraw3DObjectScene();
+		break;
+	 }
+	
 	
 	 /// <summary>
 	 /// ここに3Dオブジェクトの描画処理を追加できる
 	 /// </summary>
  
+
+
+
+
+
+
+
+
 	 // 3Dオブジェクト描画後処理
 	 Model::PostDraw();
 #pragma endregion
@@ -250,9 +341,7 @@ void  GameScene::Draw()
 #pragma endregion
 }
 
-
-
-
+#pragma region アップデートの処理
 
 
 
@@ -280,5 +369,179 @@ void GameScene::CheckAllisions() {
 		if (distanceAB <= RadiusAB)
 		{
 		player_->OnCollsion();
+		scene_ = Scene::Win;
+		draw3DObjectScene_ = Draw3DObjectScene::Win;
+		draw2DObjectScene_ = Draw2DObjectScene::Win;
 		}
-	}
+}
+
+
+
+
+void GameScene::TitleScene() {
+	    titleTimeLimit--;
+	    if (titleTextureNumber_ == 1) 
+		{
+
+		if (input_->TriggerKey(DIK_SPACE)) 
+		{
+			titleTextureNumber_ = 2;
+			titleTexture = 1;
+		
+		}
+	    }
+	   
+		if (titleTimeLimit <= 0)
+		{
+		titleTimeLimit = 240;
+		}
+
+	    if (titleTexture == 1) 
+		{
+		titleTime--;
+		if (titleTime <= 0) 
+		{
+
+			scene_ = Scene::Ready;
+			draw3DObjectScene_ = Draw3DObjectScene::Ready;
+			draw2DObjectScene_ = Draw2DObjectScene::Ready;
+		}
+		}
+
+}
+
+
+
+
+void GameScene::ReadyScene() 
+{ 
+	titleTexture = 0;
+ Initialize();
+	    
+		scene_ = Scene::Game;
+		draw3DObjectScene_ = Draw3DObjectScene::Game;
+		draw2DObjectScene_ = Draw2DObjectScene::Game;
+	    
+}
+
+
+
+
+
+void GameScene::GamePlayScene() 
+{
+	//死亡までのカウントダウン
+	    TimeLimit--;
+	    if (TimeLimit < 0)
+		{
+		scene_ = Scene::Lose;
+		draw3DObjectScene_ = Draw3DObjectScene::Lose;
+		draw2DObjectScene_ = Draw2DObjectScene::Lose;
+	    }
+
+	    titleTextureNumber_ = 2;
+	    // 自キャラの更新
+	    player_->Update();
+
+	    // 敵
+	    enemy_->Update();
+
+	    debugCamera_->Update();
+
+	    // 天球
+	    skydome_->Update();
+
+	    // 天球
+	    ground_->Update();
+	    // 敵
+	    // enemy_->Update();
+
+	    // 当たり判定
+	    CheckAllisions();
+
+	    // デバックの頭文字
+	    if (input_->TriggerKey(DIK_Q)) {
+		isDebgCameraActive_ = true;
+	    }
+
+	    if (isDebgCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+
+	    } else {
+		// カメラ
+		followCamera_->Update();
+		viewProjection_.matView = followCamera_->GetViewProlection().matView;
+		viewProjection_.matProjection = followCamera_->GetViewProlection().matProjection;
+		// ビュープロジェクション行列の更新と転送
+		// viewProjection_.UpdateMatrix();
+	    }
+	    // ビュープロジェクション行列の転送
+	    viewProjection_.TransferMatrix();
+}
+
+
+
+
+void GameScene::ResultScene() {}
+
+
+
+
+
+void GameScene::WinScene() 
+{
+	    titleTextureNumber_ = 1;
+	    if (input_->TriggerKey(DIK_SPACE)) 
+		{
+
+		// カウントダウンへ
+		scene_ = Scene::Title;
+		draw3DObjectScene_ = Draw3DObjectScene::Title;
+		draw2DObjectScene_ = Draw2DObjectScene::Title;
+	    }
+}
+
+void GameScene::LoseScene() 
+{
+	    titleTextureNumber_ = 1;
+	    if (input_->TriggerKey(DIK_SPACE)) {
+
+		// カウントダウンへ
+		scene_ = Scene::Title;
+		draw3DObjectScene_ = Draw3DObjectScene::Title;
+		draw2DObjectScene_ = Draw2DObjectScene::Title;
+	    }
+}
+
+void GameScene::TitleDraw3DObjectScene()
+{ }
+
+void GameScene::ReadyDraw3DObjectScene() {}
+
+void GameScene::GamePlayDraw3DObjectScene() 
+{
+	    // 自キャラの描画
+	    player_->Draw(viewProjection_);
+
+	    // 敵
+	    enemy_->Draw(viewProjection_);
+
+	    // 天球
+	    skydome_->Draw(viewProjection_);
+
+	    // 地面
+	    ground_->Draw(viewProjection_);
+
+		
+}
+
+void GameScene::ResultDraw3DObjectScene() {}
+
+
+void GameScene::WinDraw3DObjectScene() {}
+
+void GameScene::LoseDraw3DObjectScene() {}
+
+#pragma endregion
