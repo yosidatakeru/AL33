@@ -10,8 +10,8 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <DebugCamera.h>
-#include"Enemy.h"
-
+#include"GameMap.h"
+#include"Camera.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -55,9 +55,17 @@ private: // メンバ変数
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0;
 	ViewProjection viewProjection_;
+
+
+	//プレイヤー
 	Player* player_ = nullptr;
+	
+	
+	//カメラ
 	bool isDebgCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
-	Model* enemyModel_ = nullptr;
-	Enemy* enemy_ = nullptr;
+	std::unique_ptr<Camera> railCamera_;
+
+	//マップ
+	GameMap* gameMap_ = nullptr;
 };

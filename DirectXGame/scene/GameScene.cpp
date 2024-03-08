@@ -5,84 +5,69 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {
+GameScene::~GameScene()
+{
 	// モデルの開放
 	delete model_;
 	// 自キャラの解放
 	//delete player_;
 	delete debugCamera_;
 
-	  /// delete enemy_;
-	delete enemy_;
+	
 }
 
-void GameScene::Initialize() {
+void GameScene::Initialize() 
+{
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("sample.png");
+	
 
 	
 	// 3Dモデルの生成
 	model_ = Model::Create();
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
+
+
+
+
+	// マップの初期化
+	gameMap_ = new GameMap();
+	gameMap_->Initialize(model_, textureHandle_);
+
+
 	// 自キャラの生成
 	player_ = new Player();
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_, textureHandle_,gameMap_);
 
+	
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
+	Vector3 rotation = {0.0f, 0.0f, 0.0f};
+	railCamera_ = std::make_unique<Camera>();
+	railCamera_->Initialize(player_->GetWorldPosition(), rotation);
+	//railCamera_->Initialize(player_->GetWorldPosition(), rotation);
 
 	// 軸方向表示の表示を有効化する
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	//敵/////////////
-const float kEnemySpeed = -0.5f;
-	Vector3 velocity(0, 0, kEnemySpeed);
-	Vector3 enemyPosition(0, 1.0, 100);
-
-	enemyModel_ = Model::Create();
-	enemy_ = new Enemy();
-	enemy_->Initialize(enemyModel_, enemyPosition, velocity);
-	/////////////////////////
 
 }
 
-void GameScene::Update() {
+void GameScene::Update()
+{
 	// 自キャラの更新
 	player_->Update();
-
+	gameMap_->Update();
 	debugCamera_->Update();
 
-	// 敵
-	enemy_->Update();
-
-	Matrix4x4 cameraMatrix = {};
-	cameraMatrix.m[0][0] = 1.0f;
-	cameraMatrix.m[0][1] = 0.0f;
-	cameraMatrix.m[0][2] = 0.0f;
-	cameraMatrix.m[0][3] = 0.0f;
-
-	cameraMatrix.m[1][0] = 0.0f;
-	cameraMatrix.m[1][1] = 1.0f;
-	cameraMatrix.m[1][2] = 0.0f;
-	cameraMatrix.m[1][3] = 0.0f;
-
-	cameraMatrix.m[2][0] = 0.0f;
-	cameraMatrix.m[2][1] = 0.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 0.0f;
-
-	cameraMatrix.m[2][0] = 1280.0f;
-	cameraMatrix.m[2][1] = 720.0f;
-	cameraMatrix.m[2][2] = 1.0f;
-	cameraMatrix.m[2][3] = 1.0f;
+	
 
 	#ifdef _DEBUG
 	// デバックの頭文字
@@ -91,10 +76,12 @@ void GameScene::Update() {
 	}
 
 #endif
-	if (isDebgCameraActive_) {
-		debugCamera_->Update();
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+	if (isDebgCameraActive_) 
+	{
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
 	} else {
@@ -131,9 +118,8 @@ void GameScene::Draw() {
 	Model::PreDraw(commandList);
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
+	gameMap_->Draw(viewProjection_);
 
-	// 敵の描画
-	enemy_->Draw(viewProjection_);
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>

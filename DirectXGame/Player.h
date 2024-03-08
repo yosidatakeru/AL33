@@ -3,7 +3,7 @@
 #include "WorldTransform.h"
 #include "Function.h"
 #include "Input.h"
-#include"PlayerBullet.h"
+#include"GameMap.h"
 #include<list>
 class Player {
 
@@ -18,7 +18,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap);
 
 	/// <summary>
 	/// 更新
@@ -30,23 +30,28 @@ public:
 	/// </summary>
 	void Draw(ViewProjection& viewProjection_);
 
-	/// <summary>
-	// 攻撃
-	/// </summary>
-	void Attack();
+	
+	void Jump();
 
-	//// 弾
-	std::list<PlayerBullet*> bullets_;
+	
+	Vector3 GetWorldPosition();
+
+	
 
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	WorldTransform worldTransformSecondPlayer_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
 	Player* player_ = nullptr;
 	// キーボード入力
 	Input* input_ = nullptr;
-	// 弾
-	PlayerBullet* bullet_ = nullptr;
-	//Vector3 velociy_;
+	GameMap* gameMap_ = nullptr;
+	int stage_ = 0;
+	//ジャンプパラメータ
+	bool jumpAction_ = false;
+	float jumpSpeed = 0;
+
+	int StageSwitching = false;
 };
