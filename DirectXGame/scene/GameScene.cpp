@@ -76,18 +76,19 @@ void GameScene::Update()
 	}
 
 #endif
-	if (isDebgCameraActive_) 
-	{
+	//if (isDebgCameraActive_) 
+	//{
 		railCamera_->Update();
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
-	} else {
-		// ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
-	}
+	//} else {
+		//railCamera_->Update();
+		
+		//viewProjection_.UpdateMatrix();
+	//}
 
 
 }
@@ -135,7 +136,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	player_->Draw2D();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 

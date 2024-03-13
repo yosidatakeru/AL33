@@ -9,10 +9,11 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 	this->model_ = model;
 	this->texureHandle_ = textureHandle;
 	//仮
-	texureHandle_ = TextureManager::Load("uvChecker.png");
-	
-
-
+	texureHandle_ = TextureManager::Load("block.png");
+	redblocktexureHandle_ = TextureManager::Load("redblock.png");
+	blueblooktexureHandle_ = TextureManager::Load("blueblook.png");
+	Block_OFF2texureHandle_ = TextureManager::Load("Block_OFF2.png");
+	Block_ON2texureHandle_ = TextureManager::Load("Block_ON2.png");
 	//ステージ切り替え
 	for (int y = 0; y < StageYMax; y++)
 	{
@@ -21,8 +22,8 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 			switch (Map_) 
 			{ 
 				case 0:
-				    mapDataBase[y][x] = mapData3[y][x];
-				    mapDataBase2[y][x] = mapData2[y][x];
+				    mapDataBase[y][x] = tutorial1[y][x];
+				    mapDataBase2[y][x] = tutorial2[y][x];
 				break;
 			}	
 			
@@ -41,9 +42,19 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 			worldTransform_[y][x].translation_.x = (float)x * 2;
 			worldTransform_[y][x].translation_.y = (float)y * 2;
 			worldTransform_[y][x].Initialize();
+			
+			 
+		
+			
+		    
 		}
 	}
-}
+	
+	
+
+	}
+
+
 
 void GameMap::Update() 
 {
@@ -53,14 +64,19 @@ void GameMap::Update()
 	{
 		for (int x = 0; x < StageXMax; x++) 
 		{
-			worldTransform_[y][x].matWorld_ = MakeAffineMatrix(
+			    worldTransform_[y][x].matWorld_ = MakeAffineMatrix(
 			    worldTransform_[y][x].scale_, worldTransform_[y][x].rotation_,
 			    worldTransform_[y][x].translation_);
+				worldTransform_[y][x].TransferMatrix();	
 
-			worldTransform_[y][x].TransferMatrix();
+				
 		}
 	}
 }
+
+
+
+
 
 void GameMap::Draw(ViewProjection& viewProjection_) 
 {
@@ -73,6 +89,25 @@ void GameMap::Draw(ViewProjection& viewProjection_)
 				model_->Draw(worldTransform_[y][x], viewProjection_, texureHandle_);
 			}		
 			
+			if (mapData[y][x] == 2) 
+			{
+				model_->Draw(worldTransform_[y][x], viewProjection_, redblocktexureHandle_);
+			}		
+
+			if (mapData[y][x] == 4) 
+			{
+				model_->Draw(worldTransform_[y][x], viewProjection_, Block_ON2texureHandle_);
+			}		
+
+			if (mapData[y][x] == 3) 
+			{
+				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
+			}		
+			
+			if (mapData[y][x] == 5) {
+				model_->Draw(worldTransform_[y][x], viewProjection_, Block_OFF2texureHandle_);
+			}		
+
 		}
 	}
 }
@@ -86,7 +121,7 @@ bool GameMap::ChecMap(float px, float py)
 	{
 		for (int x = 0; x < StageXMax; x++)
 		{
-			if (mapData[y][x] == 1) 
+			if (mapData[y][x] == 1 || mapData[y][x] == 2 || mapData[y][x] ==3) 
 			{
 				float x2 = worldTransform_[y][x].translation_.x;
 				float y2 = worldTransform_[y][x].translation_.y;
