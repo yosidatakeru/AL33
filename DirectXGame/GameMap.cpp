@@ -136,6 +136,26 @@ bool GameMap::ChecMap(float px, float py)
 	return false;
 }
 
+//マップ切り替え際今いる場所にぶっろくがあるかどうかの確認
+bool GameMap::ChecNextMap(float px, float py) 
+{
+	for (int y = 0; y < StageYMax; y++) {
+		for (int x = 0; x < StageXMax; x++) {
+			if (mapData[y][x] == 4 || mapData[y][x] == 5 ) 
+			{
+				float x2 = worldTransform_[y][x].translation_.x;
+				float y2 = worldTransform_[y][x].translation_.y;
+				if (abs(x2 - px) < 2.0f && abs(y2 - py) < 2.0f)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+
+}
+
 
 //ステージ切り替え用
 void GameMap::Stage(int stage) 

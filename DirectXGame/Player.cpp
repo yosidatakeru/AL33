@@ -30,22 +30,23 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) 
 	
 
 
-	//ここの処理よくわからんから保留できれば一つにまとめたい
-	for (int  y = 0; y < gameMap_->GetStageYMax(); y++) 
-	{
-		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
-		{
-			map[y][x] = map1[y][x];
-		}
-	}
+	////ここの処理よくわからんから保留できれば一つにまとめたい
+	//for (int  y = 0; y < gameMap_->GetStageYMax(); y++) 
+	//{
+	//	for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
+	//	{
+	//		map[y][x] = map1[y][x];
+	//	}
+	//}
 
 	//プレイヤー１の初期化
 
 	for (int y = 0; y < gameMap_->GetStageYMax(); y++)
 	{
 		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
-		{	
-			if (map[gameMap_->GetStageYMax() - y - 1][x] == 6) 
+		{
+			if (gameMap_->GetMapDataBase(y,x ) ==
+			    6) 
 			{
 				worldTransform_.translation_.x = (float)x * 2;
 				worldTransform_.translation_.y = (float)y * 2;
@@ -62,7 +63,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) 
 		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
 		{
 
-			if (map[gameMap_->GetStageYMax() - y - 1][x] == 7) {
+			if (gameMap_->GetMapDataBase(y, x) == 7) {
 				worldTransformSecondPlayer_.translation_.x = (float)x * 2;
 				worldTransformSecondPlayer_.translation_.y = (float)y * 2;
 				break;
@@ -75,7 +76,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) 
 			
 	 
 	//ゴールフラグ初期化
-	goal = false;
+	goalCheck = false;
 
 	// シングルトンインスタンスを取得
 	input_ = Input::GetInstance();
@@ -159,17 +160,35 @@ void Player::Update()
 	//マップ切り替え仮
 	
 
-		if (input_->TriggerKey(DIK_S) && StageSwitching == false)
+		if (input_->TriggerKey(DIK_S) && StageSwitching == false )
 		{
-			 stage_ = 1;
-			 StageSwitching = true;
-			 gameMap_->Stage(stage_);
-	    } else if (input_->TriggerKey(DIK_S))
+		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
+		float playerPosy = worldTransform_.translation_.y;
+
+		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
+		float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
+		
+		if (gameMap_->ChecNextMap(playerPosx,playerPosy)==false &&gameMap_->ChecNextMap(secondPlayerPosx,secondPlayerPosy)==false)
 		{
+
+			stage_ = 1;
+			StageSwitching = true;
+			gameMap_->Stage(stage_);
+		}
 	    
-			 stage_ = 0;
-			 StageSwitching = false;
-			 gameMap_->Stage(stage_);
+		} else if (input_->TriggerKey(DIK_S))
+		{
+		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
+		float playerPosy = worldTransform_.translation_.y;
+
+		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
+		float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
+		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
+		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false) {
+			stage_ = 0;
+			StageSwitching = false;
+			gameMap_->Stage(stage_);
+		}
 		}
 	
 	// 移動の限界
@@ -222,7 +241,7 @@ void Player::Draw(ViewProjection& viewProjection_)
 
 void  Player::Draw2D() 
 {
-	if (goal == true)
+	if (goalCheck == true)
 	{
 		     sprite_->Draw(); 
 	}
@@ -359,7 +378,7 @@ void Player::CheckAllCollision()
 
 	if (preyerAB <= RadiusAB) 
 	{
-		            goal = true;
+		            goalCheck = true;
 	}
 }
 
