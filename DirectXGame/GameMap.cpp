@@ -22,8 +22,29 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 			switch (Map_) 
 			{ 
 				case 0:
-				    mapDataBase[y][x] = tutorial1[y][x];
-				    mapDataBase2[y][x] = tutorial2[y][x];
+				mapDataBase[y][x] = tutorial1[y][x];
+				mapDataBase2[y][x] = tutorial2[y][x];
+				break;
+
+
+				case 1:
+				mapDataBase[y][x] = stage1Map1[y][x];
+				mapDataBase2[y][x] = stage1Map2[y][x];
+				break;
+
+				case 2:
+				mapDataBase[y][x] = stage2Map1[y][x];
+				mapDataBase2[y][x] = stage2Map2[y][x];
+				break;
+
+				case 3:
+				mapDataBase[y][x] = stage3Map1[y][x];
+				mapDataBase2[y][x] = stage3Map2[y][x];
+				break;
+
+				case 4:
+				mapDataBase[y][x] = stage4Map1[y][x];
+				mapDataBase2[y][x] = stage4Map2[y][x];
 				break;
 			}	
 			

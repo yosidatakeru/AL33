@@ -6,7 +6,12 @@
 #include"GameMap.h"
 #include<list>
 #include"Sprite.h"
-class Player {
+#include"Enemy.h"
+ class Player   
+ {
+
+	
+public:
 
 	/// <summary>
 	/// デストラクタ
@@ -15,7 +20,6 @@ class Player {
 	/// <summary>
 	/// 自キャラ
 	/// </summary>
-public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -39,6 +43,8 @@ public:
 	//プレイヤー同士の当たり判定
 	void CheckAllCollision();
 
+
+
 	Vector3 GetWorldPosition();
 
 	Vector3 GetWorldPositionSecondPlayer();
@@ -51,6 +57,7 @@ private:
 	WorldTransform worldTransform_;
 	//プレイヤー２のパラメータ
 	WorldTransform worldTransformSecondPlayer_;
+	
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
 
@@ -63,6 +70,8 @@ private:
 
 	Player* player_ = nullptr;
 	
+
+
 	//プレイヤーのラディウス(当たり判定用)
 	const float_t radius_ = 0.1f;
 	// キーボード入力

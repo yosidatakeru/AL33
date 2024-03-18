@@ -9,7 +9,7 @@ void Camera::Initialize(Vector3 transkation, Vector3 rotation)
 
 	// カメラの位置
 	// カメラの座標をここでいじる
-	Vector3 move = {40.00f, 16.0f, -100.0f};
+	Vector3 move = {34.00f, 18.0f, -48.0f};
 
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 

@@ -8,7 +8,8 @@
 #include "WinApp.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+{
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
 	// 汎用機能
@@ -20,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2B_29_ヨシダ_タケル_AL3");
+	win->CreateGameWindow(L"ダブル");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();

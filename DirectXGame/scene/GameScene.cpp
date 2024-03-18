@@ -7,12 +7,8 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene()
 {
-	// モデルの開放
-	delete model_;
-	// 自キャラの解放
-	//delete player_;
-	delete debugCamera_;
-
+	
+	 
 	
 }
 
@@ -40,16 +36,22 @@ void GameScene::Initialize()
 
 
 	// 自キャラの生成
-	player_ = new Player();
+	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_,gameMap_);
+
+
+	// 自キャラの生成
+	enemy_ = std::make_unique<Enemy>();
+	// 自キャラの初期化
+	enemy_->Initialize(model_, textureHandle_, gameMap_);
 
 	
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
 	Vector3 rotation = {0.0f, 0.0f, 0.0f};
-	railCamera_ = std::make_unique<Camera>();
-	railCamera_->Initialize(player_->GetWorldPosition(), rotation);
+	camera_ = std::make_unique<Camera>();
+	camera_->Initialize(player_->GetWorldPosition(), rotation);
 	//railCamera_->Initialize(player_->GetWorldPosition(), rotation);
 
 	// 軸方向表示の表示を有効化する
@@ -64,6 +66,9 @@ void GameScene::Update()
 {
 	// 自キャラの更新
 	player_->Update();
+	//敵の更新
+	enemy_->Update();
+
 	gameMap_->Update();
 	debugCamera_->Update();
 
@@ -78,9 +83,9 @@ void GameScene::Update()
 #endif
 	//if (isDebgCameraActive_) 
 	//{
-		railCamera_->Update();
-		viewProjection_.matView = railCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		camera_->Update();
+		viewProjection_.matView = camera_->GetViewProjection().matView;
+		viewProjection_.matProjection = camera_->GetViewProjection().matProjection;
 
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
@@ -119,6 +124,11 @@ void GameScene::Draw() {
 	Model::PreDraw(commandList);
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
+
+	//敵の描画
+	enemy_->Draw(viewProjection_);
+
+	//マップの描画
 	gameMap_->Draw(viewProjection_);
 
 	/// <summary>

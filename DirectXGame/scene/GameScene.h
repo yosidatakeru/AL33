@@ -12,10 +12,13 @@
 #include <DebugCamera.h>
 #include"GameMap.h"
 #include"Camera.h"
+#include<memory>
+#include"Enemy.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene
+{
 
 public: // メンバ関数
 	/// <summary>
@@ -58,13 +61,15 @@ private: // メンバ変数
 
 
 	//プレイヤー
-	Player* player_ = nullptr;
+	std::unique_ptr<Player> player_;
 	
+	//敵
+	std::unique_ptr<Enemy> enemy_;
 	
 	//カメラ
 	bool isDebgCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
-	std::unique_ptr<Camera> railCamera_;
+	std::unique_ptr<Camera> camera_;
 
 	//マップ
 	GameMap* gameMap_ = nullptr;

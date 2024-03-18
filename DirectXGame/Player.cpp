@@ -14,7 +14,8 @@ Player::~Player()
 }
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
+void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
+{
 	assert(model);
 	// 引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
@@ -29,16 +30,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) 
 	worldTransform_.Initialize();
 	
 
-
-	////ここの処理よくわからんから保留できれば一つにまとめたい
-	//for (int  y = 0; y < gameMap_->GetStageYMax(); y++) 
-	//{
-	//	for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
-	//	{
-	//		map[y][x] = map1[y][x];
-	//	}
-	//}
-
+	
 	//プレイヤー１の初期化
 
 	for (int y = 0; y < gameMap_->GetStageYMax(); y++)
@@ -63,7 +55,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) 
 		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
 		{
 
-			if (gameMap_->GetMapDataBase(y, x) == 7) {
+			if (gameMap_->GetMapDataBase(y, x) == 7)
+			{
 				worldTransformSecondPlayer_.translation_.x = (float)x * 2;
 				worldTransformSecondPlayer_.translation_.y = (float)y * 2;
 				break;
@@ -144,7 +137,7 @@ void Player::Update()
 	}
 
 	 // ジャンプ開始
-	if (jumpAction_ == false) 
+	if (jumpAction_ == false && jumpActionSecondPlayer_==false) 
 	{
 
 		if (input_->TriggerKey(DIK_SPACE))
@@ -157,9 +150,9 @@ void Player::Update()
 	}
 	Jump();
 	JumpSecondPlayer();
-	//マップ切り替え仮
-	
 
+	
+     //マップ切り替え操作
 		if (input_->TriggerKey(DIK_S) && StageSwitching == false )
 		{
 		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
@@ -178,20 +171,21 @@ void Player::Update()
 	    
 		} else if (input_->TriggerKey(DIK_S))
 		{
-		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
-		float playerPosy = worldTransform_.translation_.y;
+		  float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
+		  float playerPosy = worldTransform_.translation_.y;
 
-		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
-		float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
-		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
-		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false) {
-			stage_ = 0;
-			StageSwitching = false;
-			gameMap_->Stage(stage_);
-		}
+		  float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
+		  float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
+
+		  if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
+		      gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false)
+		  {
+			  stage_ = 0;
+		   	  StageSwitching = false;
+			  gameMap_->Stage(stage_);
+		  }
 		}
 	
-	// 移動の限界
 	
 
 	
@@ -239,11 +233,13 @@ void Player::Draw(ViewProjection& viewProjection_)
 	
 }
 
+
+
 void  Player::Draw2D() 
 {
 	if (goalCheck == true)
 	{
-		     sprite_->Draw(); 
+	   sprite_->Draw(); 
 	}
 }
 
@@ -313,30 +309,39 @@ void Player::Jump()
 
 }
 
+
+
 void Player::JumpSecondPlayer() 
 {
 	            // ジャンプ実装
-	            if (jumpActionSecondPlayer_ == false) {
+	            if (jumpActionSecondPlayer_ == false) 
+				{
 		            float x = worldTransformSecondPlayer_.translation_.x;
 		            float y = worldTransformSecondPlayer_.translation_.y - 0.1f;
 
-		            if (gameMap_->ChecMap(x, y) == false) {
-			        jumpActionSecondPlayer_ = true;
-			        jumpSpeedSecondPlayer= 0;
+		            if (gameMap_->ChecMap(x, y) == false) 
+					{
+			          jumpActionSecondPlayer_ = true;
+			          jumpSpeedSecondPlayer= 0;
 		            }
 	            }
 
-	            if (jumpActionSecondPlayer_ == true) {
+	            if (jumpActionSecondPlayer_ == true) 
+				{
 
-		            if (jumpSpeedSecondPlayer > 0) {
+		            if (jumpSpeedSecondPlayer > 0) 
+					{
 
 			        for (float i = 0; i < jumpSpeedSecondPlayer; i += 0.1f) 
 					{
 				      float x = worldTransformSecondPlayer_.translation_.x;
 				      float y = worldTransformSecondPlayer_.translation_.y + 0.1f;
-				      if (gameMap_->ChecMap(x, y) == false) {
+				     
+					  if (gameMap_->ChecMap(x, y) == false) 
+					  {
 					   worldTransformSecondPlayer_.translation_.y += 0.1f;
-				      } else {
+				      } else
+					  {
 					   jumpSpeedSecondPlayer = 0;
 					   break;
 				      }
@@ -344,16 +349,22 @@ void Player::JumpSecondPlayer()
 
 		            } else // 下降
 		            {
-			        for (float i = jumpSpeedSecondPlayer; i < 0; i += 0.1f) {
-				      float x = worldTransformSecondPlayer_.translation_.x;
-				      float y = worldTransformSecondPlayer_.translation_.y - 0.1f;
-				      if (gameMap_->ChecMap(x, y) == false) {
-					   worldTransformSecondPlayer_.translation_.y -= 0.1f;
-				      } else {
-					   jumpActionSecondPlayer_ = false;
-					   break;
-				      }
-			        }
+			          for (float i = jumpSpeedSecondPlayer; i < 0; i += 0.1f) 
+					  {
+				        float x = worldTransformSecondPlayer_.translation_.x;
+				        float y = worldTransformSecondPlayer_.translation_.y - 0.1f;
+				        
+					    
+					    if (gameMap_->ChecMap(x, y) == false) 
+					    {
+					     worldTransformSecondPlayer_.translation_.y -= 0.1f;
+				        }
+					    else 
+					    {
+					     jumpActionSecondPlayer_ = false;
+					     break;
+				        }
+			          }
 		            }
 		            jumpSpeedSecondPlayer -= 0.05f;
 	            }
@@ -369,26 +380,31 @@ void Player::CheckAllCollision()
 	posA = GetWorldPositionSecondPlayer();
 	posB = GetWorldPosition();
 
-	float preyerAB =   (posB.x - posA.x) * (posB.x - posA.x) +
-	                   (posB.y - posA.y) * (posB.y - posA.y) +
-	                   (posB.z - posA.z) * (posB.z - posA.z);
+	float preyerAB = (posB.x - posA.x) * (posB.x - posA.x) +
+	                 (posB.y - posA.y) * (posB.y - posA.y) +
+	                 (posB.z - posA.z) * (posB.z - posA.z);
 
 	float RadiusAB = (radius_ + radius_) + (radius_ + radius_);
 
 
 	if (preyerAB <= RadiusAB) 
 	{
-		            goalCheck = true;
+      goalCheck = true;
 	}
 }
 
-Vector3 Player::GetWorldPosition() {
-	            Vector3 worldPos;
 
-	            worldPos.x = worldTransform_.matWorld_.m[3][0];
-	            worldPos.y = worldTransform_.matWorld_.m[3][1];
-	            worldPos.z = worldTransform_.matWorld_.m[3][2];
-	            return worldPos;
+
+Vector3 Player::GetWorldPosition() 
+{
+    Vector3 worldPos;
+
+	 worldPos.x = worldTransform_.matWorld_.m[3][0];
+	 worldPos.y = worldTransform_.matWorld_.m[3][1];
+	 worldPos.z = worldTransform_.matWorld_.m[3][2];
+	
+	 
+	 return worldPos;
 }
 
 Vector3 Player::GetWorldPositionSecondPlayer()
