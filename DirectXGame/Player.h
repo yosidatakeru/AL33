@@ -7,6 +7,7 @@
 #include<list>
 #include"Sprite.h"
 #include"Enemy.h"
+
  class Player   
  {
 
@@ -43,14 +44,15 @@ public:
 	//プレイヤー同士の当たり判定
 	void CheckAllCollision();
 
-
+	float GetRadius() const { return radius_; }
+	
 
 	Vector3 GetWorldPosition();
+	Vector3 GetWorldPos();
 
 	Vector3 GetWorldPositionSecondPlayer();
 
-	
-	
+	void palyerReset();
 
 private:
 	// ワールド変換データ
@@ -70,14 +72,14 @@ private:
 
 	Player* player_ = nullptr;
 	
-
+	Enemy* enenmy = nullptr;
 
 	//プレイヤーのラディウス(当たり判定用)
-	const float_t radius_ = 0.1f;
+	const float_t radius_ = 0.2f;
 	// キーボード入力
 	Input* input_ = nullptr;
 	GameMap* gameMap_ = nullptr;
-	int stage_ = 0;
+	
 	//ジャンプパラメータ
 	bool jumpAction_ = false;
 	float jumpSpeed = 0;
@@ -87,7 +89,6 @@ private:
 	float jumpSpeedSecondPlayer = 0;
 	
 
-	int StageSwitching = false;
 
 	//ゴール用のフラグ確認用
 

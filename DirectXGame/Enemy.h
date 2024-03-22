@@ -27,15 +27,27 @@ public:
 
     void Jump();
 
+	void enenmyReset();
+
+	Vector3 GetWorldPosition(); 
+	
+	Vector3 GetWorldPos(); 
+
+	float GetRadius() const { return radius_; }
+
 private:
 
 	Model* model_;
-	WorldTransform worldTransform_;
+	WorldTransform enemyWorldTransform_;
 	uint32_t textureHandle_ = 0u;
 	GameMap* gameMap_;
 
+
+	//float enemyKCharacterSpeed = 0.2;
 	// キーボード入力
 	Input* input_ = nullptr;
+
+	const float_t radius_ = 0.2f;
 
 	// ジャンプパラメータ
 	bool jumpAction_ = false;

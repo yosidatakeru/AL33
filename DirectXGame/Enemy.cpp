@@ -12,7 +12,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 
 		
-	worldTransform_.Initialize();
+	enemyWorldTransform_.Initialize();
 
 	// プレイヤー１の初期化
 
@@ -22,8 +22,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
 		{
 			if (gameMap_->GetMapDataBase(y, x) == 8)
 			{
-				worldTransform_.translation_.x = (float)x * 2;
-				worldTransform_.translation_.y = (float)y * 2;
+				enemyWorldTransform_.translation_.x = (float)x * 2;
+				enemyWorldTransform_.translation_.y = (float)y * 2;
 				break;
 			}
 		}
@@ -35,6 +35,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
 
 void Enemy::Update()
 {
+	
 	////キャラクターの移動ベクトル
 	Vector3 move = {0.0, 0.0f, 0.0f};
 
@@ -46,8 +47,8 @@ void Enemy::Update()
 
 	////押した方向で移動ベクトルを変更（左右）
 	if (input_->PushKey(DIK_LEFT)) {
-		float EnemyPosx = worldTransform_.translation_.x - kCharacterSpeed;
-		float EnemyPosy = worldTransform_.translation_.y;
+		float EnemyPosx = enemyWorldTransform_.translation_.x - kCharacterSpeed;
+		float EnemyPosy = enemyWorldTransform_.translation_.y;
 
 		if (gameMap_->ChecMap(EnemyPosx, EnemyPosy) == false) 
 		{
@@ -58,8 +59,8 @@ void Enemy::Update()
 
 	} else if (input_->PushKey(DIK_RIGHT)) 
 {
-		float x = worldTransform_.translation_.x + kCharacterSpeed;
-		float y = worldTransform_.translation_.y;
+		float x = enemyWorldTransform_.translation_.x + kCharacterSpeed;
+		float y = enemyWorldTransform_.translation_.y;
 
 		
 		if (gameMap_->ChecMap(x, y) == false)
@@ -94,13 +95,13 @@ void Enemy::Update()
 
 	
 	// 座標移動（ベクトルの加算）
-	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+	enemyWorldTransform_.translation_ = Add(enemyWorldTransform_.translation_, move);
 	////平行移動行列
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	enemyWorldTransform_.matWorld_ = MakeAffineMatrix(
+	    enemyWorldTransform_.scale_, enemyWorldTransform_.rotation_, enemyWorldTransform_.translation_);
 
-	worldTransform_.TransferMatrix();
+	enemyWorldTransform_.TransferMatrix();
 
 	
 	
@@ -110,7 +111,7 @@ void Enemy::Update()
 
 void Enemy::Draw(ViewProjection& viewProjection_) 
 {
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	model_->Draw(enemyWorldTransform_, viewProjection_, textureHandle_);
 }
 
 void Enemy::Jump() 
@@ -120,8 +121,8 @@ void Enemy::Jump()
 
 	// ジャンプ実装
 	if (jumpAction_ == false) {
-		float x = worldTransform_.translation_.x;
-		float y = worldTransform_.translation_.y - 0.1f;
+		float x = enemyWorldTransform_.translation_.x;
+		float y = enemyWorldTransform_.translation_.y - 0.1f;
 
 		if (gameMap_->ChecMap(x, y) == false) {
 			jumpAction_ = true;
@@ -134,10 +135,10 @@ void Enemy::Jump()
 		if (jumpSpeed > 0) {
 
 			for (float i = 0; i < jumpSpeed; i += 0.1f) {
-				float x = worldTransform_.translation_.x;
-				float y = worldTransform_.translation_.y + 0.1f;
+				float x = enemyWorldTransform_.translation_.x;
+				float y = enemyWorldTransform_.translation_.y + 0.1f;
 				if (gameMap_->ChecMap(x, y) == false) {
-					worldTransform_.translation_.y += 0.1f;
+					enemyWorldTransform_.translation_.y += 0.1f;
 				} else {
 					jumpSpeed = 0;
 					break;
@@ -147,10 +148,10 @@ void Enemy::Jump()
 		} else // 下降
 		{
 			for (float i = jumpSpeed; i < 0; i += 0.1f) {
-				float x = worldTransform_.translation_.x;
-				float y = worldTransform_.translation_.y - 0.1f;
+				float x = enemyWorldTransform_.translation_.x;
+				float y = enemyWorldTransform_.translation_.y - 0.1f;
 				if (gameMap_->ChecMap(x, y) == false) {
-					worldTransform_.translation_.y -= 0.1f;
+					enemyWorldTransform_.translation_.y -= 0.1f;
 				} else {
 					jumpAction_ = false;
 					break;
@@ -160,3 +161,45 @@ void Enemy::Jump()
 		jumpSpeed -= 0.05f;
 	}
 }
+
+void Enemy::enenmyReset() 
+{
+	for (int y = 0; y < gameMap_->GetStageYMax(); y++) 
+	{
+		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
+		{
+			if (gameMap_->GetMapDataBase(y, x) == 8) 
+			{
+				enemyWorldTransform_.translation_.x = (float)x * 2;
+				enemyWorldTransform_.translation_.y = (float)y * 2;
+				break;
+			}
+		}
+	}
+}
+
+Vector3 Enemy::GetWorldPosition() 
+{
+	Vector3 worldPos;
+
+	worldPos.x = enemyWorldTransform_.translation_.x;
+	worldPos.y = enemyWorldTransform_.translation_.y;
+	worldPos.z = enemyWorldTransform_.translation_.z;
+
+	return worldPos;
+}
+
+Vector3 Enemy::GetWorldPos() 
+{
+	Vector3 worldPos;
+
+	worldPos.x = enemyWorldTransform_.matWorld_.m[3][0];
+	worldPos.y = enemyWorldTransform_.matWorld_.m[3][1];
+	worldPos.z = enemyWorldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+
+
+

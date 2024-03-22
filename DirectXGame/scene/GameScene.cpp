@@ -71,36 +71,78 @@ void GameScene::Update()
 
 	gameMap_->Update();
 	debugCamera_->Update();
+	const float kCharacterSpeed = 0.2f;
+	 // マップ切り替え操作
+	if (input_->TriggerKey(DIK_S) && StageSwitching == false) {
+		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
+		float playerPosy = player_->GetWorldPos().y;
 
+		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
+		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
+
+		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
+		float enemyPosy = enemy_->GetWorldPosition().y;
+
+		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false&&
+			gameMap_->ChecNextMap(secondPlayerPosx,secondPlayerPosy)==false&&
+			gameMap_->ChecNextMap(enemyPosx,enemyPosy)==false)
+		{
+
+			stage_ = 1;
+			StageSwitching = true;
+			gameMap_->Stage(stage_);
+		}
+
+	} else if (input_->TriggerKey(DIK_S)) 
+	{
+		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
+		float playerPosy = player_->GetWorldPos().y;
+
+		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
+		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
+
+		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
+		float enemyPosy = enemy_->GetWorldPosition().y;
+		
+
+		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
+		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false&&
+		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
+		{
+			stage_ = 0;
+			StageSwitching = false;
+			gameMap_->Stage(stage_);
+		}
+	}
+	
+	
 	
 
 	#ifdef _DEBUG
 	// デバックの頭文字
-	if (input_->TriggerKey(DIK_Q)) {
+	if (input_->TriggerKey(DIK_Q)) 
+	{
 		isDebgCameraActive_ = true;
 	}
 
 #endif
-	//if (isDebgCameraActive_) 
-	//{
+	
 		camera_->Update();
 		viewProjection_.matView = camera_->GetViewProjection().matView;
 		viewProjection_.matProjection = camera_->GetViewProjection().matProjection;
 
 		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
-	//} else {
-		//railCamera_->Update();
-		
-		//viewProjection_.UpdateMatrix();
-	//}
-
+	
+		//敵とプレイヤーの当たり判定
+	    CheckAllCollision();
 
 }
 
-void GameScene::Draw() {
+void GameScene::Draw() 
+{
 
-	;
+	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -152,3 +194,40 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+// 敵とプレイヤーの当たり判定
+void GameScene::CheckAllCollision() 
+{ 
+	Vector3 playerposA = player_->GetWorldPos();
+	Vector3 playerposB = player_->GetWorldPositionSecondPlayer();
+	Vector3 enemypos = enemy_->GetWorldPosition();
+
+	float preyerA = (enemypos.x - playerposA.x) * (enemypos.x - playerposA.x) +
+	                 (enemypos.y - playerposA.y) * (enemypos.y - playerposA.y) +
+	                 (enemypos.z - playerposA.z) * (enemypos.z - playerposA.z);
+
+	float RadiusA = (player_->GetRadius() + enemy_->GetRadius() + (player_->GetRadius() + enemy_->GetRadius()));
+
+	if (preyerA <= RadiusA) 
+	{
+		player_->palyerReset();
+		enemy_->enenmyReset();
+
+	}
+
+	float preyerB = (enemypos.x - playerposB.x) * (enemypos.x - playerposB.x) +
+	                (enemypos.y - playerposB.y) * (enemypos.y - playerposB.y) +
+	                (enemypos.z - playerposB.z) * (enemypos.z - playerposB.z);
+
+	float RadiusB =
+	    (player_->GetRadius() + enemy_->GetRadius() + (player_->GetRadius() + enemy_->GetRadius()));
+
+	if (preyerB <= RadiusB)
+	{
+		player_->palyerReset();
+		enemy_->enenmyReset();
+	}
+
+}
+
+
+

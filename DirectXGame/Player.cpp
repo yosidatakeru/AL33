@@ -20,6 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 	// 引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
+	
 	gameMap_ = gameMap;
 
 	textureHandle_ = TextureManager::Load("Player6.png");
@@ -152,41 +153,7 @@ void Player::Update()
 	JumpSecondPlayer();
 
 	
-     //マップ切り替え操作
-		if (input_->TriggerKey(DIK_S) && StageSwitching == false )
-		{
-		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
-		float playerPosy = worldTransform_.translation_.y;
-
-		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
-		float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
-		
-		if (gameMap_->ChecNextMap(playerPosx,playerPosy)==false &&gameMap_->ChecNextMap(secondPlayerPosx,secondPlayerPosy)==false)
-		{
-
-			stage_ = 1;
-			StageSwitching = true;
-			gameMap_->Stage(stage_);
-		}
-	    
-		} else if (input_->TriggerKey(DIK_S))
-		{
-		  float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
-		  float playerPosy = worldTransform_.translation_.y;
-
-		  float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
-		  float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
-
-		  if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
-		      gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false)
-		  {
-			  stage_ = 0;
-		   	  StageSwitching = false;
-			  gameMap_->Stage(stage_);
-		  }
-		}
-	
-	
+    
 
 	
 	// 座標移動（ベクトルの加算）
@@ -407,6 +374,17 @@ Vector3 Player::GetWorldPosition()
 	 return worldPos;
 }
 
+Vector3 Player::GetWorldPos() 
+{
+	 Vector3 worldPos;
+
+	 worldPos.x = worldTransform_.translation_.x;
+	 worldPos.y = worldTransform_.translation_.y;
+	 worldPos.z = worldTransform_.translation_.z;
+
+	 return worldPos;
+}
+
 Vector3 Player::GetWorldPositionSecondPlayer()
 { 
 	Vector3 worldPosSecondPlayer;
@@ -417,5 +395,35 @@ Vector3 Player::GetWorldPositionSecondPlayer()
 
 
 	return worldPosSecondPlayer;
+}
+
+//プレイヤーの座標をリセット
+void Player::palyerReset()
+{
+	// プレイヤー１の初期化
+
+	for (int y = 0; y < gameMap_->GetStageYMax(); y++) {
+	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) {
+			          if (gameMap_->GetMapDataBase(y, x) == 6) {
+				        worldTransform_.translation_.x = (float)x * 2;
+				        worldTransform_.translation_.y = (float)y * 2;
+				        break;
+			          }
+	  }
+	}
+
+	// プレイヤー２の初期化
+	for (int y = 0; y < gameMap_->GetStageYMax(); y++) {
+	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) {
+
+			          if (gameMap_->GetMapDataBase(y, x) == 7) {
+				        worldTransformSecondPlayer_.translation_.x = (float)x * 2;
+				        worldTransformSecondPlayer_.translation_.y = (float)y * 2;
+				        break;
+			          }
+	  }
+	}
+
+	worldTransformSecondPlayer_.Initialize();
 }
 
