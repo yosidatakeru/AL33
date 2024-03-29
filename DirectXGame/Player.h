@@ -44,8 +44,14 @@ public:
 	//プレイヤー同士の当たり判定
 	void CheckAllCollision();
 
+	//ワープ
+	void Warp(int p1,int p2);
+
+
 	float GetRadius() const { return radius_; }
-	
+	bool GetjumpAction() { return jumpAction_; }
+	bool GetjumpActionSecondPlayer() { return jumpActionSecondPlayer_; }
+
 
 	Vector3 GetWorldPosition();
 	Vector3 GetWorldPos();
@@ -88,11 +94,24 @@ private:
 	bool jumpActionSecondPlayer_ = false;
 	float jumpSpeedSecondPlayer = 0;
 	
+	//ジャンプ速度
+	const float jumpSpeedkCharacterSpeed = 0.1f;
+
+	const float fallingspeed = 0.025f;
+
+	int stageChange = false;
+
+	////キャラクターの移動速度
+	const float kCharacterSpeed = 0.2f;
 
 
 	//ゴール用のフラグ確認用
 
 	bool goalCheck = false;
 
+	//ワープしたかどうかの確認
+	int playerwarp = false;
+
+	int speedSecondplayerwarp = false;
 
 };

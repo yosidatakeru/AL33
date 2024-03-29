@@ -35,12 +35,15 @@ public:
 
 	float GetRadius() const { return radius_; }
 
+	bool GetjumpAction() { return jumpAction_; }
+
 private:
 
 	Model* model_;
 	WorldTransform enemyWorldTransform_;
 	uint32_t textureHandle_ = 0u;
 	GameMap* gameMap_;
+
 
 
 	//float enemyKCharacterSpeed = 0.2;

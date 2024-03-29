@@ -1,14 +1,16 @@
 ﻿#include "Enemy.h"
 
-Enemy::~Enemy() {}
+Enemy::~Enemy() 
+{}
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
-	// 引数として受け取ったデータをメンバ変数に記録する
+void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
+{
+	//// 引数として受け取ったデータをメンバ変数に記録する
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
 	gameMap_ = gameMap;
 
-	
+	//
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 
 		
@@ -24,6 +26,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
 			{
 				enemyWorldTransform_.translation_.x = (float)x * 2;
 				enemyWorldTransform_.translation_.y = (float)y * 2;
+				
 				break;
 			}
 		}
@@ -31,6 +34,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap) {
 
 	// シングルトンインスタンスを取得
 	input_ = Input::GetInstance();
+
 }
 
 void Enemy::Update()
@@ -71,23 +75,19 @@ void Enemy::Update()
 		
 		
 
-	} else {
+	} else
+	{
 		move.x = 0.0f;
-		move.y = 0.0f;
-		
-		
+		move.y = 0.0f;	
 	}
 
 	// ジャンプ開始
 	if (jumpAction_ == false )
 	{
-
 		if (input_->TriggerKey(DIK_SPACE)) 
 		{
 			jumpAction_ = true;
 			jumpSpeed = 1;
-			
-			
 		}
 	}
 	Jump();
@@ -109,10 +109,12 @@ void Enemy::Update()
 
 }
 
+
 void Enemy::Draw(ViewProjection& viewProjection_) 
 {
 	model_->Draw(enemyWorldTransform_, viewProjection_, textureHandle_);
 }
+
 
 void Enemy::Jump() 
 {
@@ -120,26 +122,34 @@ void Enemy::Jump()
 	// 下にブロックがないとき落下開始
 
 	// ジャンプ実装
-	if (jumpAction_ == false) {
+	if (jumpAction_ == false)
+	{
 		float x = enemyWorldTransform_.translation_.x;
 		float y = enemyWorldTransform_.translation_.y - 0.1f;
 
-		if (gameMap_->ChecMap(x, y) == false) {
+		if (gameMap_->ChecMap(x, y) == false)
+		{
 			jumpAction_ = true;
 			jumpSpeed = 0;
 		}
 	}
 
-	if (jumpAction_ == true) {
+	if (jumpAction_ == true) 
+	{
 
-		if (jumpSpeed > 0) {
+		if (jumpSpeed > 0) 
+		{
 
-			for (float i = 0; i < jumpSpeed; i += 0.1f) {
+			for (float i = 0; i < jumpSpeed; i += 0.1f)
+			{
 				float x = enemyWorldTransform_.translation_.x;
 				float y = enemyWorldTransform_.translation_.y + 0.1f;
-				if (gameMap_->ChecMap(x, y) == false) {
+				if (gameMap_->ChecMap(x, y) == false) 
+				{
+					//ジャンプの上昇
 					enemyWorldTransform_.translation_.y += 0.1f;
-				} else {
+				} else 
+				{
 					jumpSpeed = 0;
 					break;
 				}
@@ -147,18 +157,23 @@ void Enemy::Jump()
 
 		} else // 下降
 		{
-			for (float i = jumpSpeed; i < 0; i += 0.1f) {
+			for (float i = jumpSpeed; i < 0; i += 0.1f) 
+			{
 				float x = enemyWorldTransform_.translation_.x;
 				float y = enemyWorldTransform_.translation_.y - 0.1f;
-				if (gameMap_->ChecMap(x, y) == false) {
-					enemyWorldTransform_.translation_.y -= 0.1f;
-				} else {
+				if (gameMap_->ChecMap(x, y) == false) 
+				{
+					//落下速度の調整
+					enemyWorldTransform_.translation_.y -= 0.025f;
+				} else 
+				{
 					jumpAction_ = false;
 					break;
 				}
 			}
 		}
-		jumpSpeed -= 0.05f;
+		//ジャンプ高さ
+		jumpSpeed -= 0.07f;
 	}
 }
 

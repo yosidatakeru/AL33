@@ -4,6 +4,7 @@
 #include <WorldTransform.h>
 
 #include "Function.h"
+#include"GameMap.h"
 class Camera 
 {
 public:
@@ -33,4 +34,7 @@ private:
 
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	GameMap* gameMap_; 
+	
 };

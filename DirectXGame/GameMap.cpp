@@ -2,7 +2,16 @@
 #include <Function.h>
 #include <dinput.h>
 
-GameMap::~GameMap() {}
+GameMap::~GameMap() {
+	for (int y = 0; y < StageYMax; y++)
+	{
+		for (int x = 0; x < StageXMax; x++) 
+		{
+			delete model_;
+
+		}
+	}
+}
 
 void GameMap::Initialize(Model* model, uint32_t textureHandle) 
 { 
@@ -14,6 +23,8 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 	blueblooktexureHandle_ = TextureManager::Load("blueblook.png");
 	Block_OFF2texureHandle_ = TextureManager::Load("Block_OFF2.png");
 	Block_ON2texureHandle_ = TextureManager::Load("Block_ON2.png");
+
+
 	//ステージ切り替え
 	for (int y = 0; y < StageYMax; y++)
 	{
@@ -24,6 +35,9 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 				case 0:
 				mapDataBase[y][x] = tutorial1[y][x];
 				mapDataBase2[y][x] = tutorial2[y][x];
+
+				//次のステージの描画
+			
 				break;
 
 
@@ -46,13 +60,23 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 				mapDataBase[y][x] = stage4Map1[y][x];
 				mapDataBase2[y][x] = stage4Map2[y][x];
 				break;
+
+				case 5:
+				mapDataBase[y][x] = stage5Map1[y][x];
+				mapDataBase2[y][x] = stage5Map2[y][x];
+				break;
+
+				case 6:
+				mapDataBase[y][x] = debugMap1[y][x];
+				mapDataBase2[y][x] = debugMap2[y][x];
+				break;
 			}	
 			
 		}
 	}
 
 	//初期化処理
-	Stage(stage_); 
+	Stage(); 
 
 
 	//ワールドトランスホームの初期化
@@ -63,13 +87,10 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 			worldTransform_[y][x].translation_.x = (float)x * 2;
 			worldTransform_[y][x].translation_.y = (float)y * 2;
 			worldTransform_[y][x].Initialize();
-			
-			 
-		
-			
-		    
 		}
 	}
+
+	
 	
 	
 
@@ -89,7 +110,6 @@ void GameMap::Update()
 			    worldTransform_[y][x].scale_, worldTransform_[y][x].rotation_,
 			    worldTransform_[y][x].translation_);
 				worldTransform_[y][x].TransferMatrix();	
-
 				
 		}
 	}
@@ -105,29 +125,27 @@ void GameMap::Draw(ViewProjection& viewProjection_)
 	{ 
 		for (int x = 0; x < StageXMax; x++) 
 		{
+
 			if (mapData[y][x] == 1) 
 			{
 				model_->Draw(worldTransform_[y][x], viewProjection_, texureHandle_);
 			}		
 			
-			if (mapData[y][x] == 2) 
+			
+
+
+			
+
+			if(mapData2[y][x] == 2)
 			{
 				model_->Draw(worldTransform_[y][x], viewProjection_, redblocktexureHandle_);
 			}		
-
-			if (mapData[y][x] == 4) 
-			{
-				model_->Draw(worldTransform_[y][x], viewProjection_, Block_ON2texureHandle_);
-			}		
-
-			if (mapData[y][x] == 3) 
-			{
+			
+			 if (mapData2[y][x] == 3 || mapData2[y][x] == 4 || mapData2[y][x] == 5 )
+			 {
 				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
 			}		
-			
-			if (mapData[y][x] == 5) {
-				model_->Draw(worldTransform_[y][x], viewProjection_, Block_OFF2texureHandle_);
-			}		
+
 
 		}
 	}
@@ -142,7 +160,7 @@ bool GameMap::ChecMap(float px, float py)
 	{
 		for (int x = 0; x < StageXMax; x++)
 		{
-			if (mapData[y][x] == 1 || mapData[y][x] == 2 || mapData[y][x] ==3) 
+			if (mapData[y][x] == 1) 
 			{
 				float x2 = worldTransform_[y][x].translation_.x;
 				float y2 = worldTransform_[y][x].translation_.y;
@@ -157,18 +175,24 @@ bool GameMap::ChecMap(float px, float py)
 	return false;
 }
 
+
+
 //マップ切り替え際今いる場所にぶっろくがあるかどうかの確認
 bool GameMap::ChecNextMap(float px, float py) 
 {
-	for (int y = 0; y < StageYMax; y++) {
-		for (int x = 0; x < StageXMax; x++) {
-			if (mapData[y][x] == 4 || mapData[y][x] == 5 ) 
+	for (int y = 0; y < StageYMax; y++) 
+	{
+		for (int x = 0; x < StageXMax; x++) 
+		{
+			if (mapData[y][x] == 4  ) 
 			{
 				float x2 = worldTransform_[y][x].translation_.x;
 				float y2 = worldTransform_[y][x].translation_.y;
 				if (abs(x2 - px) < 2.0f && abs(y2 - py) < 2.0f)
 				{
 					return true;
+
+					
 				}
 			}
 		}
@@ -178,26 +202,55 @@ bool GameMap::ChecNextMap(float px, float py)
 }
 
 
-//ステージ切り替え用
-void GameMap::Stage(int stage) 
+//ワープの処理
+int GameMap::ChacWarp(float px, float py) 
+{
+	for (int y = 0; y < StageYMax; y++)
+	{
+		for (int x = 0; x < StageXMax; x++) 
+		{
+			float x2 = worldTransform_[y][x].translation_.x;
+			float y2 = worldTransform_[y][x].translation_.y;
+			
+
+				if (mapData2[y][x] != 0) 
+				{
+				    if (abs(x2 - px) < 2.0f && abs(y2 - py) < 2.0f) 
+					{
+					return mapData2[y][x];
+				    }
+			    }
+			    
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+
+
+//ステージ描画
+void GameMap::Stage() 
 { 
-	stage_ = stage; 
+	
 	for (int y = 0; y < StageYMax; y++) 
 	{
 		for (int x = 0; x < StageXMax; x++) 
 		{
 
-			switch (stage_) 
-			{
-			case 0:
+			 
+			
+			
 				mapData[y][x] = mapDataBase[StageYMax - y - 1][x];
-				break;
 
-			case 1:
-				mapData[y][x] = mapDataBase2[StageYMax - y - 1][x];
+				mapData2[y][x] = mapDataBase2[StageYMax - y - 1][x];
 				
-				break;
-			}
+				
+		
+			
 		}
 	}
 }

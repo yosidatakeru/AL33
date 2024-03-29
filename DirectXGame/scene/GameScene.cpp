@@ -3,12 +3,17 @@
 #include <cassert>
 #include "AxisIndicator.h"
 
-GameScene::GameScene() {}
+GameScene::GameScene() 
+{
+
+}
 
 GameScene::~GameScene()
 {
-	
-	 
+	delete model_;
+
+		
+
 	
 }
 
@@ -52,14 +57,12 @@ void GameScene::Initialize()
 	Vector3 rotation = {0.0f, 0.0f, 0.0f};
 	camera_ = std::make_unique<Camera>();
 	camera_->Initialize(player_->GetWorldPosition(), rotation);
-	//railCamera_->Initialize(player_->GetWorldPosition(), rotation);
-
-	// 軸方向表示の表示を有効化する
+	 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する（アドレス渡し）
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-
+	
 }
 
 void GameScene::Update()
@@ -67,55 +70,74 @@ void GameScene::Update()
 	// 自キャラの更新
 	player_->Update();
 	//敵の更新
-	enemy_->Update();
+	//enemy_->Update();
 
 	gameMap_->Update();
 	debugCamera_->Update();
-	const float kCharacterSpeed = 0.2f;
-	 // マップ切り替え操作
-	if (input_->TriggerKey(DIK_S) && StageSwitching == false) {
-		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
-		float playerPosy = player_->GetWorldPos().y;
 
-		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
-		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
-
-		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
-		float enemyPosy = enemy_->GetWorldPosition().y;
-
-		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false&&
-			gameMap_->ChecNextMap(secondPlayerPosx,secondPlayerPosy)==false&&
-			gameMap_->ChecNextMap(enemyPosx,enemyPosy)==false)
-		{
-
-			stage_ = 1;
-			StageSwitching = true;
-			gameMap_->Stage(stage_);
-		}
-
-	} else if (input_->TriggerKey(DIK_S)) 
+	// カメラの処理
+	if (gameMap_->ChecNextMap(player_->GetWorldPos().x, player_->GetWorldPos().y) == true &&
+	    camera_->GetWorldTransform().translation_.y<=56.0f)
 	{
-		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
-		float playerPosy = player_->GetWorldPos().y;
-
-		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
-		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
-
-		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
-		float enemyPosy = enemy_->GetWorldPosition().y;
 		
+			camera_->GetWorldTransform().translation_.y++;
 
-		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
-		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy)==false&&
-		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
-		{
-			stage_ = 0;
-			StageSwitching = false;
-			gameMap_->Stage(stage_);
-		}
+			
+		//56.0fに行ったらマップウを切り替え処理する
+
 	}
-	
-	
+
+
+
+	//const float kCharacterSpeed = 0.2f;
+
+
+
+
+	//	// マップ切り替え操作
+	//	if (input_->TriggerKey(DIK_S) && StageSwitching == false) 
+	//	{
+	//		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
+	//		float playerPosy = player_->GetWorldPos().y;
+
+	//		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
+	//		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
+
+	//		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
+	//		float enemyPosy = enemy_->GetWorldPosition().y;
+
+	//		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
+	//		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy) == false &&
+	//		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
+	//		{
+
+	//			stage_ = 1;
+	//			StageSwitching = true;
+	//			gameMap_->Stage(stage_);
+	//		}
+
+	//	 
+	//	{
+	//		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
+	//		float playerPosy = player_->GetWorldPos().y;
+
+	//		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
+	//		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
+
+	//		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
+	//		float enemyPosy = enemy_->GetWorldPosition().y;
+
+	//		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
+	//		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy) == false &&
+	//		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
+	//		{
+	//			stage_ = 0;
+	//			StageSwitching = false;
+	//			gameMap_->Stage(stage_);
+	//		}
+	//	}
+	//}
+	//
 	
 
 	#ifdef _DEBUG
@@ -136,6 +158,8 @@ void GameScene::Update()
 	
 		//敵とプレイヤーの当たり判定
 	    CheckAllCollision();
+
+		
 
 }
 
@@ -168,7 +192,7 @@ void GameScene::Draw()
 	player_->Draw(viewProjection_);
 
 	//敵の描画
-	enemy_->Draw(viewProjection_);
+//	enemy_->Draw(viewProjection_);
 
 	//マップの描画
 	gameMap_->Draw(viewProjection_);

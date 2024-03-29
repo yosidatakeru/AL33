@@ -8,10 +8,7 @@
 
 
 // デストラクタ
-Player::~Player() 
-{
-	
-}
+Player::~Player() { }
 
 
 void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
@@ -23,6 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 	
 	gameMap_ = gameMap;
 
+	
 	textureHandle_ = TextureManager::Load("Player6.png");
 	goaltextureHandle_ = TextureManager::Load("goal.png");
 
@@ -38,8 +36,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 	{
 		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
 		{
-			if (gameMap_->GetMapDataBase(y,x ) ==
-			    6) 
+			if (gameMap_->GetMapDataBase(y,x ) == 6) 
 			{
 				worldTransform_.translation_.x = (float)x * 2;
 				worldTransform_.translation_.y = (float)y * 2;
@@ -65,6 +62,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 		}
 	}
 
+	
+
 
 	worldTransformSecondPlayer_.Initialize();
 			
@@ -85,19 +84,19 @@ void Player::Update()
 	////キャラクターの移動ベクトル
 	Vector3 move = {0.0, 0.0f, 0.0f};
 	Vector3 move2 = {0.0, 0.0f, 0.0f};
-	////キャラクターの移動速度
-	const float kCharacterSpeed = 0.2f;
+	
 	
 	//当たり判定呼び出し
-	CheckAllCollision();
+	//CheckAllCollision();
 
+	
 	////押した方向で移動ベクトルを変更（左右）
 	if (input_->PushKey(DIK_LEFT)) 
 	{
-		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
+		float playerPosx = worldTransform_.translation_.x - kCharacterSpeed ;
 		float playerPosy = worldTransform_.translation_.y;
 
-		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
+		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x + kCharacterSpeed ;
 		float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
 		
 		if (gameMap_->ChecMap(playerPosx, playerPosy) == false) 
@@ -107,7 +106,7 @@ void Player::Update()
 		}
 		if (gameMap_->ChecMap(secondPlayerPosx, secondPlayerPosy) == false)
 		{
-			move2.x -= kCharacterSpeed;
+			move2.x += kCharacterSpeed;
 		}
 
 	} else if (input_->PushKey(DIK_RIGHT)) 
@@ -115,7 +114,7 @@ void Player::Update()
 		float x = worldTransform_.translation_.x + kCharacterSpeed;
 		float y = worldTransform_.translation_.y;
 
-		float x2 = worldTransformSecondPlayer_.translation_.x + kCharacterSpeed;
+		float x2 = worldTransformSecondPlayer_.translation_.x - kCharacterSpeed;
 		float y2 = worldTransformSecondPlayer_.translation_.y;
 		
 		if (gameMap_->ChecMap(x,y) == false) 
@@ -126,7 +125,7 @@ void Player::Update()
 
 		if (gameMap_->ChecMap(x2, y2) == false) 
 		{
-		move2.x += kCharacterSpeed;
+		move2.x -= kCharacterSpeed;
 		}
 
 	} else 
@@ -149,11 +148,39 @@ void Player::Update()
 			jumpSpeedSecondPlayer = 1;
 		}
 	}
-	Jump();
-	JumpSecondPlayer();
+	if (stageChange == false) 
+	{
+
+		Jump();
+		JumpSecondPlayer();
+	}
+	
+	
+	
+
+    float playerPosx = worldTransform_.translation_.x - kCharacterSpeed;
+	float playerPosy = worldTransform_.translation_.y;
 
 	
-    
+		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x + kCharacterSpeed;
+	float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
+	
+
+		Warp(
+	    gameMap_->ChacWarp(playerPosx, playerPosy),
+	    gameMap_->ChacWarp(secondPlayerPosx, secondPlayerPosy));
+
+
+
+	if (gameMap_->ChecNextMap(playerPosx, playerPosy) == true) 
+	{
+		
+		stageChange = true;
+
+	} else 
+	{
+		stageChange = false;
+	}
 
 	
 	// 座標移動（ベクトルの加算）
@@ -218,7 +245,7 @@ void  Player::Draw2D()
 
 void Player::Jump() 
 {
-	           
+	           //ヒトマス当たり0.02f
 
 	            // 下にブロックがないとき落下開始
 
@@ -226,7 +253,7 @@ void Player::Jump()
 	            if (jumpAction_ == false)
 				{
 		          float x = worldTransform_.translation_.x;
-		          float y = worldTransform_.translation_.y - 0.1f;
+	              float y = worldTransform_.translation_.y - jumpSpeedkCharacterSpeed;
 		        
 		          if (gameMap_->ChecMap(x, y) == false) 
 			      {
@@ -244,10 +271,10 @@ void Player::Jump()
 			       for (float i = 0; i < jumpSpeed; i += 0.1f)
 				   {
 				     float x = worldTransform_.translation_.x;
-				     float y = worldTransform_.translation_.y + 0.1f;
+				     float y = worldTransform_.translation_.y + jumpSpeedkCharacterSpeed;
 				     if (gameMap_->ChecMap(x, y) == false) 
 				     {
-					     worldTransform_.translation_.y += 0.1f;
+					     worldTransform_.translation_.y += jumpSpeedkCharacterSpeed;
 					 } else 
 				     {
 					 jumpSpeed = 0;
@@ -256,14 +283,19 @@ void Player::Jump()
 			       }
 
 		        } else // 下降
-		          {
+		          
+				 
+				 {
 			        for (float i = jumpSpeed; i < 0; i += 0.1f) 
 					{
 				      float x = worldTransform_.translation_.x;
-				      float y = worldTransform_.translation_.y - 0.1f;
+				     float y = worldTransform_.translation_.y - jumpSpeedkCharacterSpeed;
 				      if (gameMap_->ChecMap(x, y) == false) 
 					  {
-					     worldTransform_.translation_.y -= 0.1f;
+
+					 worldTransform_.translation_.y -= fallingspeed;
+					 ;
+			
 				       } else 
 					  {
 					   jumpAction_ = false;
@@ -271,7 +303,8 @@ void Player::Jump()
 					  }
 					}
 		           }  
-				    jumpSpeed -= 0.05f;
+				
+				    jumpSpeed -= 0.09f;
 	            }
 
 }
@@ -302,11 +335,12 @@ void Player::JumpSecondPlayer()
 			        for (float i = 0; i < jumpSpeedSecondPlayer; i += 0.1f) 
 					{
 				      float x = worldTransformSecondPlayer_.translation_.x;
-				      float y = worldTransformSecondPlayer_.translation_.y + 0.1f;
+				      float y =
+				          worldTransformSecondPlayer_.translation_.y + jumpSpeedkCharacterSpeed;
 				     
 					  if (gameMap_->ChecMap(x, y) == false) 
 					  {
-					   worldTransformSecondPlayer_.translation_.y += 0.1f;
+					   worldTransformSecondPlayer_.translation_.y += jumpSpeedkCharacterSpeed ;
 				      } else
 					  {
 					   jumpSpeedSecondPlayer = 0;
@@ -318,13 +352,15 @@ void Player::JumpSecondPlayer()
 		            {
 			          for (float i = jumpSpeedSecondPlayer; i < 0; i += 0.1f) 
 					  {
-				        float x = worldTransformSecondPlayer_.translation_.x;
-				        float y = worldTransformSecondPlayer_.translation_.y - 0.1f;
+				      float x = worldTransformSecondPlayer_.translation_.x;
+				      float y =
+				          worldTransformSecondPlayer_.translation_.y - jumpSpeedkCharacterSpeed;
 				        
 					    
 					    if (gameMap_->ChecMap(x, y) == false) 
 					    {
-					     worldTransformSecondPlayer_.translation_.y -= 0.1f;
+						
+					   worldTransformSecondPlayer_.translation_.y -= fallingspeed;
 				        }
 					    else 
 					    {
@@ -333,7 +369,7 @@ void Player::JumpSecondPlayer()
 				        }
 			          }
 		            }
-		            jumpSpeedSecondPlayer -= 0.05f;
+		            jumpSpeedSecondPlayer -= 0.09f;
 	            }
 }
 
@@ -359,6 +395,94 @@ void Player::CheckAllCollision()
       goalCheck = true;
 	}
 }
+
+
+
+
+
+
+
+void Player::Warp(int p1,int p2 )
+{ 
+//ここも変える
+
+//kここも改造すべき
+for (int y = 0; y < gameMap_->GetStageYMax(); y++)
+	{
+		for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
+		{
+			          if (playerwarp == false) 
+					  {
+
+				        if (p1 != 0 && p1 != 1) 
+						{
+
+					     if (p1 % 2 == 0) 
+						 {
+						     // 偶数から奇数
+						     if (gameMap_->GetMapDataBase2(y, x) == p1 + 1) {
+							     worldTransform_.translation_.x = (float)x * 2;
+							     worldTransform_.translation_.y = (float)y * 2;
+							     playerwarp = true;
+						     }
+					     } else 
+						 {
+						     // 奇数から偶数
+						     if (gameMap_->GetMapDataBase2(y, x) == p1 - 1)
+							 {
+							     worldTransform_.translation_.x = (float)x * 2;
+							     worldTransform_.translation_.y = (float)y * 2;
+							     playerwarp= true;
+						     }
+					     }
+				        }
+			          } else if(p1==0)
+					  {
+				        playerwarp = false;
+			          }
+			           
+
+					  if (speedSecondplayerwarp == false)
+					  {
+
+				        if (p2 != 0 && p2 != 1)
+						{
+
+					     if (p2 % 2 == 0) 
+						 {
+						     // 偶数から奇数
+						     if (gameMap_->GetMapDataBase2(y, x) == p2 + 1 ) 
+							 {
+							     worldTransformSecondPlayer_.translation_.x = (float)x * 2;
+							     worldTransformSecondPlayer_.translation_.y = (float)y * 2;
+							     speedSecondplayerwarp = true;
+						     }
+					     } else {
+						     // 奇数から偶数
+						     if (gameMap_->GetMapDataBase2(y, x) == p2 - 1 ) 
+							 {
+							     worldTransformSecondPlayer_.translation_.x = (float)x * 2;
+							     worldTransformSecondPlayer_.translation_.y = (float)y * 2;
+							     speedSecondplayerwarp = true;
+						     }
+					     }
+				        }
+			          } else if (p2 == 0) {
+
+				        speedSecondplayerwarp = false;
+			          }
+
+		}
+		
+	}
+  
+}
+
+
+
+
+
+
 
 
 
@@ -402,9 +526,12 @@ void Player::palyerReset()
 {
 	// プレイヤー１の初期化
 
-	for (int y = 0; y < gameMap_->GetStageYMax(); y++) {
-	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) {
-			          if (gameMap_->GetMapDataBase(y, x) == 6) {
+	for (int y = 0; y < gameMap_->GetStageYMax(); y++)
+	{
+	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
+	  {
+			          if (gameMap_->GetMapDataBase(y, x) == 6) 
+					  {
 				        worldTransform_.translation_.x = (float)x * 2;
 				        worldTransform_.translation_.y = (float)y * 2;
 				        break;
@@ -413,10 +540,13 @@ void Player::palyerReset()
 	}
 
 	// プレイヤー２の初期化
-	for (int y = 0; y < gameMap_->GetStageYMax(); y++) {
-	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) {
+	for (int y = 0; y < gameMap_->GetStageYMax(); y++) 
+	{
+	  for (int x = 0; x < gameMap_->GetStageXMax(); x++) 
+	  {
 
-			          if (gameMap_->GetMapDataBase(y, x) == 7) {
+			          if (gameMap_->GetMapDataBase(y, x) == 7)
+					  {
 				        worldTransformSecondPlayer_.translation_.x = (float)x * 2;
 				        worldTransformSecondPlayer_.translation_.y = (float)y * 2;
 				        break;

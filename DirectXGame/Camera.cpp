@@ -27,6 +27,8 @@ void Camera::Initialize(Vector3 transkation, Vector3 rotation)
 
 void Camera::Update() 
 {
+
+	
 	worldTransform_.UpdeateMatrix();
 
 	// カメラオブジェクトのワールド行列からビュー行列を計算する
