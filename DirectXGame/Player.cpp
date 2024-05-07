@@ -25,7 +25,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 	goaltextureHandle_ = TextureManager::Load("goal.png");
 
 	// ゴール仮
-	sprite_ = Sprite::Create(goaltextureHandle_ ,{100,100});
+	sprite_ = Sprite::Create(goaltextureHandle_, {100, 100} );
 	worldTransform_.Initialize();
 	
 
@@ -67,7 +67,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, GameMap* gameMap)
 
 	worldTransformSecondPlayer_.Initialize();
 			
-	 
+
 	//ゴールフラグ初期化
 	goalCheck = false;
 
@@ -162,7 +162,7 @@ void Player::Update()
 	float playerPosy = worldTransform_.translation_.y;
 
 	
-		float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x + kCharacterSpeed;
+	float secondPlayerPosx = worldTransformSecondPlayer_.translation_.x + kCharacterSpeed;
 	float secondPlayerPosy = worldTransformSecondPlayer_.translation_.y;
 	
 
@@ -170,7 +170,10 @@ void Player::Update()
 	    gameMap_->ChacWarp(playerPosx, playerPosy),
 	    gameMap_->ChacWarp(secondPlayerPosx, secondPlayerPosy));
 
-
+		
+	
+		gameMap_->ChacSwitch(playerPosx,playerPosy);
+		
 
 	if (gameMap_->ChecNextMap(playerPosx, playerPosy) == true) 
 	{
@@ -182,7 +185,20 @@ void Player::Update()
 		stageChange = false;
 	}
 
+
+   //スイッチの当たり判定
+	  playerPos = gameMap_->ChacSwitch(playerPosx, playerPosy);
+
+	 gameMap_->GetplayerPos(playerPos);
+
+
+	 secondPlayerPos = gameMap_->ChacSwitch(secondPlayerPosx, secondPlayerPosy);
+
+	 gameMap_->GetSecondPlayerPos(secondPlayerPos);
 	
+
+
+
 	// 座標移動（ベクトルの加算）
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	////平行移動行列
@@ -231,10 +247,9 @@ void Player::Draw(ViewProjection& viewProjection_)
 
 void  Player::Draw2D() 
 {
-	if (goalCheck == true)
-	{
-	   sprite_->Draw(); 
-	}
+	
+	 //  sprite_->Draw(); 
+	
 }
 
 

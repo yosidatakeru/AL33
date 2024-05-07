@@ -31,6 +31,16 @@ public: // メンバ関数
 	/// </summary>
 	~GameScene();
 
+	int GameScene_ = 0;
+	int sceneMode_ = 0;
+
+	void GamePlayUpdate();
+	void TitleUpdate();
+	void TutorialUpdate();
+
+	void DrawTitle();
+	void DrawTutorial();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -67,6 +77,15 @@ private: // メンバ変数
 	
 	//敵
 	std::unique_ptr<Enemy> enemy_;
+
+	uint32_t textureHandleTitle_ = 0;
+	Sprite* spriteTitle_;
+
+	uint32_t textureHandleTutorial_ = 0;
+	Sprite* spriteTutorial_;
+
+	uint32_t textureHandleRule_ = 0;
+	Sprite* spriteRule_;
 	
 	//カメラ
 	bool isDebgCameraActive_ = false;

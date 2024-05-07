@@ -17,14 +17,19 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 { 
 	this->model_ = model;
 	this->texureHandle_ = textureHandle;
+	
 	//仮
 	texureHandle_ = TextureManager::Load("block.png");
 	redblocktexureHandle_ = TextureManager::Load("redblock.png");
 	blueblooktexureHandle_ = TextureManager::Load("blueblook.png");
-	Block_OFF2texureHandle_ = TextureManager::Load("Block_OFF2.png");
+	backgroundtureHandle_ = TextureManager::Load("background.png");
 	Block_ON2texureHandle_ = TextureManager::Load("Block_ON2.png");
 
+	goaltexureHandle_ = TextureManager::Load("Block_ON2.png");
 
+	//背景
+	sprite_ = Sprite::Create(backgroundtureHandle_, {0, 0})
+	;
 	//ステージ切り替え
 	for (int y = 0; y < StageYMax; y++)
 	{
@@ -49,6 +54,8 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 				case 2:
 				mapDataBase[y][x] = stage2Map1[y][x];
 				mapDataBase2[y][x] = stage2Map2[y][x];
+				mapDataBase3[y][x] = stage2Map3[y][x];
+				mapDataBase4[y][x] = stage2Map4[y][x];
 				break;
 
 				case 3:
@@ -91,8 +98,8 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 	}
 
 	
-	
-	
+		input_ = Input::GetInstance();
+
 
 	}
 
@@ -100,7 +107,11 @@ void GameMap::Initialize(Model* model, uint32_t textureHandle)
 
 void GameMap::Update() 
 {
-	
+	    goalBlinking++;
+	    if (goalBlinking == 120)
+		{
+		goalBlinking = 0;
+		}
 
 	for (int y = 0; y < StageYMax; y++) 
 	{
@@ -111,8 +122,28 @@ void GameMap::Update()
 			    worldTransform_[y][x].translation_);
 				worldTransform_[y][x].TransferMatrix();	
 				
+				 
+			
 		}
 	}
+
+	    if (input_->TriggerKey(DIK_S) && switchToggle[0][playerPos_] !=false )
+		{
+		  switchToggle[0][playerPos_] = false;
+	     
+		} else if (input_->TriggerKey(DIK_S) && switchToggle[0][playerPos_] == false) 
+		{
+		  switchToggle[0][playerPos_] = true;
+	    }
+
+		if (input_->TriggerKey(DIK_S) && switchToggle[0][secondPlayerPos_] != false) 
+		{
+		  switchToggle[0][secondPlayerPos_] = false;
+
+	    } else if (input_->TriggerKey(DIK_S) && switchToggle[0][secondPlayerPos_] == false) 
+		{
+		  switchToggle[0][secondPlayerPos_] = true;
+	    }
 }
 
 
@@ -131,25 +162,47 @@ void GameMap::Draw(ViewProjection& viewProjection_)
 				model_->Draw(worldTransform_[y][x], viewProjection_, texureHandle_);
 			}		
 			
-			
-
-
-			
-
-			if(mapData2[y][x] == 2)
+			if (goalBlinking >= 60) 
 			{
-				model_->Draw(worldTransform_[y][x], viewProjection_, redblocktexureHandle_);
-			}		
+
+				if (mapData[y][x] == 4)
+				{
+					model_->Draw(worldTransform_[y][x], viewProjection_, goaltexureHandle_);
+				}
+			}
+
 			
-			 if (mapData2[y][x] == 3 || mapData2[y][x] == 4 || mapData2[y][x] == 5 )
+
+			
+			 if (mapData2[y][x] != 0  )
 			 {
 				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
-			}		
+			   }		
 
+			  if (mapData3[y][x] == 2) 
+			  {
+				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
+			   }		
 
+			   if (mapData3[y][x] == 3) 
+			   {
+				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
+			   }		
+			  
+			  if (mapData4[y][x] == 2 && switchToggle[0][2] == false) 
+			  {
+				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
+			   }
+
+			   if (mapData4[y][x] == 3 && switchToggle[0][3] == false) {
+				model_->Draw(worldTransform_[y][x], viewProjection_, blueblooktexureHandle_);
+			   }
 		}
 	}
 }
+
+void GameMap::Draw2D() 
+{ sprite_->Draw(); }
 
 
 
@@ -191,8 +244,6 @@ bool GameMap::ChecNextMap(float px, float py)
 				if (abs(x2 - px) < 2.0f && abs(y2 - py) < 2.0f)
 				{
 					return true;
-
-					
 				}
 			}
 		}
@@ -226,6 +277,28 @@ int GameMap::ChacWarp(float px, float py)
 	return 0;
 }
 
+int GameMap::ChacSwitch(float px, float py) 
+{
+	for (int y = 0; y < StageYMax; y++) 
+	{
+		for (int x = 0; x < StageXMax; x++) 
+		{
+			    float x2 = worldTransform_[y][x].translation_.x;
+			    float y2 = worldTransform_[y][x].translation_.y;
+
+			    if (mapData3[y][x] != 0) 
+				{
+				    if (abs(x2 - px) < 2.0f && abs(y2 - py) < 2.0f)
+					{
+						//今いる位置の値を返す
+					return mapData3[y][x];
+				    }
+			    }
+		}
+	}
+	return 0; 
+}
+
 
 
 
@@ -247,6 +320,10 @@ void GameMap::Stage()
 				mapData[y][x] = mapDataBase[StageYMax - y - 1][x];
 
 				mapData2[y][x] = mapDataBase2[StageYMax - y - 1][x];
+
+				mapData3[y][x] = mapDataBase3[StageYMax - y - 1][x];
+
+			    mapData4[y][x] = mapDataBase4[StageYMax - y - 1][x];
 				
 				
 		

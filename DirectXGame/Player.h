@@ -114,4 +114,7 @@ private:
 
 	int speedSecondplayerwarp = false;
 
-};
+	int playerPos = 0;
+	
+	int secondPlayerPos = 0;
+ };

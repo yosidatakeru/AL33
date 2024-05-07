@@ -51,6 +51,12 @@ void GameScene::Initialize()
 	// 自キャラの初期化
 	enemy_->Initialize(model_, textureHandle_, gameMap_);
 
+	textureHandleTitle_ = TextureManager::Load("kuttukero title.png");
+	spriteTitle_ = Sprite::Create(textureHandleTitle_, { 0.0f, 0 });
+
+	textureHandleTutorial_ = TextureManager::Load("kuttukero_Rule.png");
+	spriteTutorial_ = Sprite::Create(textureHandleTutorial_, { 0.0f, 0 });
+
 	
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(720, 1280);
@@ -65,79 +71,58 @@ void GameScene::Initialize()
 	
 }
 
+
 void GameScene::Update()
 {
-	// 自キャラの更新
-	player_->Update();
-	//敵の更新
-	//enemy_->Update();
-
-	gameMap_->Update();
-	debugCamera_->Update();
-
-	// カメラの処理
-	if (gameMap_->ChecNextMap(player_->GetWorldPos().x, player_->GetWorldPos().y) == true &&
-	    camera_->GetWorldTransform().translation_.y<=56.0f)
-	{
-		
-			camera_->GetWorldTransform().translation_.y++;
-
-			
-		//56.0fに行ったらマップウを切り替え処理する
-
+	switch ((sceneMode_)) {
+	case 0:
+		TitleUpdate();
+		break;
+	case 1:
+		TutorialUpdate();
+		break;
+	case 2:
+		GamePlayUpdate();
+		break;
 	}
 
+	//// 自キャラの更新
+	//player_->Update();
+	////敵の更新
+	////enemy_->Update();
+
+	//gameMap_->Update();
+	//debugCamera_->Update();
 
 
-	//const float kCharacterSpeed = 0.2f;
+	//// カメラの処理
+	//if (gameMap_->ChecNextMap(player_->GetWorldPos().x, player_->GetWorldPos().y) == true &&
+	//	gameMap_->ChecNextMap(player_->GetWorldPositionSecondPlayer().x,player_->GetWorldPositionSecondPlayer().y)==true&&
+	//    camera_->GetWorldTransform().translation_.y<=56.0f)
+	//{
+	//	
+	//	camera_->GetWorldTransform().translation_.y++;
 
+	//		
+	//	//56.0fに行ったらマップウを切り替え処理する
 
-
-
-	//	// マップ切り替え操作
-	//	if (input_->TriggerKey(DIK_S) && StageSwitching == false) 
-	//	{
-	//		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
-	//		float playerPosy = player_->GetWorldPos().y;
-
-	//		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
-	//		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
-
-	//		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
-	//		float enemyPosy = enemy_->GetWorldPosition().y;
-
-	//		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
-	//		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy) == false &&
-	//		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
-	//		{
-
-	//			stage_ = 1;
-	//			StageSwitching = true;
-	//			gameMap_->Stage(stage_);
-	//		}
-
-	//	 
-	//	{
-	//		float playerPosx = player_->GetWorldPos().x - kCharacterSpeed;
-	//		float playerPosy = player_->GetWorldPos().y;
-
-	//		float secondPlayerPosx = player_->GetWorldPositionSecondPlayer().x - kCharacterSpeed;
-	//		float secondPlayerPosy = player_->GetWorldPositionSecondPlayer().y;
-
-	//		float enemyPosx = enemy_->GetWorldPosition().x - kCharacterSpeed;
-	//		float enemyPosy = enemy_->GetWorldPosition().y;
-
-	//		if (gameMap_->ChecNextMap(playerPosx, playerPosy) == false &&
-	//		    gameMap_->ChecNextMap(secondPlayerPosx, secondPlayerPosy) == false &&
-	//		    gameMap_->ChecNextMap(enemyPosx, enemyPosy) == false) 
-	//		{
-	//			stage_ = 0;
-	//			StageSwitching = false;
-	//			gameMap_->Stage(stage_);
-	//		}
-	//	}
 	//}
-	//
+	//if (camera_->GetWorldTransform().translation_.y >= 56.0f)
+	//{
+	//	camera_->GetWorldTransform().translation_.y = 18.0f;
+	//	int i = gameMap_->GetMap();
+	//	i += 1;
+	//	gameMap_->SetMap(i);
+	//	player_->Initialize(model_, textureHandle_, gameMap_);
+	//	gameMap_->Initialize(model_, textureHandle_);
+
+	//}
+
+
+
+
+
+
 	
 
 	#ifdef _DEBUG
@@ -149,7 +134,72 @@ void GameScene::Update()
 
 #endif
 	
-		camera_->Update();
+		//camera_->Update();
+		//viewProjection_.matView = camera_->GetViewProjection().matView;
+		//viewProjection_.matProjection = camera_->GetViewProjection().matProjection;
+
+		//// ビュープロジェクション行列の転送
+		//viewProjection_.TransferMatrix();
+	
+		////敵とプレイヤーの当たり判定
+	 //   CheckAllCollision();
+
+		
+
+}
+
+void GameScene::TitleUpdate() {
+
+	if (input_->TriggerKey(DIK_RETURN)) {
+		sceneMode_ = 1;
+	}
+
+}
+
+void GameScene::TutorialUpdate() {
+
+	if (input_->TriggerKey(DIK_RETURN)) {
+		sceneMode_ = 2;
+	}
+
+}
+
+void GameScene::GamePlayUpdate() {
+
+	// 自キャラの更新
+	player_->Update();
+	//敵の更新
+	//enemy_->Update();
+
+	gameMap_->Update();
+	debugCamera_->Update();
+
+
+	// カメラの処理
+	if (gameMap_->ChecNextMap(player_->GetWorldPos().x, player_->GetWorldPos().y) == true &&
+		gameMap_->ChecNextMap(player_->GetWorldPositionSecondPlayer().x,player_->GetWorldPositionSecondPlayer().y)==true&&
+	    camera_->GetWorldTransform().translation_.y<=56.0f)
+	{
+		
+		camera_->GetWorldTransform().translation_.y++;
+
+			
+		//56.0fに行ったらマップウを切り替え処理する
+
+	}
+	if (camera_->GetWorldTransform().translation_.y >= 56.0f)
+	{
+		camera_->GetWorldTransform().translation_.y = 18.0f;
+		int i = gameMap_->GetMap();
+		i += 1;
+		gameMap_->SetMap(i);
+		player_->Initialize(model_, textureHandle_, gameMap_);
+		gameMap_->Initialize(model_, textureHandle_);
+
+	}
+
+
+	camera_->Update();
 		viewProjection_.matView = camera_->GetViewProjection().matView;
 		viewProjection_.matProjection = camera_->GetViewProjection().matProjection;
 
@@ -159,8 +209,16 @@ void GameScene::Update()
 		//敵とプレイヤーの当たり判定
 	    CheckAllCollision();
 
-		
+}
 
+void GameScene::DrawTitle() {
+
+	spriteTitle_->Draw();
+}
+
+void GameScene::DrawTutorial() {
+
+	spriteTutorial_->Draw();
 }
 
 void GameScene::Draw() 
@@ -174,11 +232,14 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(commandList);
 
-
+	
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	gameMap_->Draw2D(); 
+	
+	player_->Draw2D();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -208,11 +269,20 @@ void GameScene::Draw()
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
+	
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
+	
+	if (sceneMode_ == 0) {
+		DrawTitle();
+	}
+
+	if (sceneMode_ == 1) {
+		DrawTutorial();
+	}
+
 	/// </summary>
-	player_->Draw2D();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 

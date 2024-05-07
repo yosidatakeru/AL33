@@ -2,7 +2,8 @@
 #include <cassert>
 #include <cmath>
 
-Vector3 Add(const Vector3 v1, const Vector3 v2) {
+Vector3 Add(const Vector3 v1, const Vector3 v2)
+{
 	Vector3 result = {};
 	result.x = v1.x + v2.x;
 	result.y = v1.y + v2.y;
@@ -12,7 +13,8 @@ Vector3 Add(const Vector3 v1, const Vector3 v2) {
 }
 
 // Scale
-Matrix4x4 MakeScaleMatrix(const Vector3 scale) {
+Matrix4x4 MakeScaleMatrix(const Vector3 scale)
+{
 	Matrix4x4 result = {};
 	result.m[0][0] = scale.x;
 	result.m[0][1] = 0.0f;
