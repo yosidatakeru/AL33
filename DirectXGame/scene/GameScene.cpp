@@ -76,7 +76,7 @@ void GameScene::Update()
 {
 	switch ((sceneMode_)) {
 	case 0:
-		TitleUpdate();
+		GamePlayUpdate();
 		break;
 	case 1:
 		TutorialUpdate();
@@ -118,8 +118,11 @@ void GameScene::Update()
 
 	//}
 
-
-
+	//リセット
+	if (input_->TriggerKey(DIK_S)) 
+	{
+		player_->Initialize(model_, textureHandle_, gameMap_);
+	}
 
 
 
@@ -193,6 +196,7 @@ void GameScene::GamePlayUpdate() {
 		int i = gameMap_->GetMap();
 		i += 1;
 		gameMap_->SetMap(i);
+
 		player_->Initialize(model_, textureHandle_, gameMap_);
 		gameMap_->Initialize(model_, textureHandle_);
 
@@ -208,12 +212,13 @@ void GameScene::GamePlayUpdate() {
 	
 		//敵とプレイヤーの当たり判定
 	    CheckAllCollision();
-
+	   // int i = gameMap_->GetMap();
 }
 
 void GameScene::DrawTitle() {
 
 	spriteTitle_->Draw();
+
 }
 
 void GameScene::DrawTutorial() {

@@ -34,12 +34,5 @@ void Camera::Update()
 	// カメラオブジェクトのワールド行列からビュー行列を計算する
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 
-	// カメラの座標を画面表示する処理
-	ImGui::Begin("Camera");
-
-	// スライダーでtranslationとratationを表示
-	ImGui::SliderFloat3("translation", &worldTransform_.translation_.x, -200.0f, 200.0f);
-	//ImGui::SliderFloat3("rotation", &worldTransform_.rotation_.x, -50.0f, 50.0f);
-
-	ImGui::End();
+	
 }

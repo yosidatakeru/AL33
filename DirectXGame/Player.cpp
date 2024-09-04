@@ -148,12 +148,12 @@ void Player::Update()
 			jumpSpeedSecondPlayer = 1;
 		}
 	}
-	if (stageChange == false) 
-	{
+	//if (stageChange == false) 
+	//{
 
 		Jump();
 		JumpSecondPlayer();
-	}
+	//}
 	
 	
 	
@@ -223,14 +223,6 @@ void Player::Update()
 	
 
 
-	// 画面に座標を出す
-	ImGui::Begin("Player");
-
-	ImGui::InputFloat3("PlayerPosition", &worldTransform_.translation_.x);
-	ImGui::SliderFloat3("PlayerSlide", &worldTransform_.translation_.x, -20.0f, 30.0f);
-	ImGui::InputFloat3("Playerジャンプn", &jumpSpeed);
-	ImGui::SliderFloat3("Playerzyannpu", &jumpSpeed, -20.0f, 30.0f);
-	ImGui::End();
 }
 
 
